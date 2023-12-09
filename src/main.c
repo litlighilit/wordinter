@@ -36,7 +36,9 @@ int main(int argc, char* argv[]){
     return 0;
 
 PHelp:
-    msgl("Version: %s", Version);
+    PriInfo(ProjName);
+    PriInfo(Version);
+    PriInfo(License);
     msgl(HelpMsg);
     return 0;
 
