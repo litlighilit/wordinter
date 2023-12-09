@@ -37,6 +37,7 @@ char* joinPath(const char* dir, const char*fname){
         res=malloc(++resLen);
         strcpy(res, dir);
         res[dLen]=OS_SEP;
+        res[dLen+1]='\0';
     }else{
         res=malloc(resLen);
         strcpy(res, dir);
