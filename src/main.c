@@ -3,30 +3,44 @@
 
 #include <stdio.h>
 #include "types.h" // RecSeq
+#include "seq.h"
 #include "fsutil.h" // listDir
 #include "interpreter.h" // enterRepl
+#include "cli.h"
 #include "msg.h" // err
 
+#include "main.h" // HelpMsg, Version
 
 int main(int argc, char* argv[]){
-    char* arg = argv[1];
-    if(arg==NULL) err("please pass a directory path as a argument");
+    if(argc==1) err("please pass a directory path as a argument");
 
-    RecSeq rs = listDir(arg);
+    int passed = 1; // pass argv[0]
+    const char** restArgs = (const char**)(argv+passed);
+    Args args = parseArg(restArgs, argc-passed);
+
+    if(args.help) goto PHelp;
+    else if(args.version) goto PVersion;
+
+    RecSeq rs = listDir(args.arg);
     if(rs.len==0) {
         err("can't read any data from dir");
     }
 
-    int icmd = argc-1;
-    if( strcmp(
-        argv[icmd-1],
-        "-c")==0
-    ){
-        CharSeq cmd = charpToSeq(argv[icmd]);
-        evalCmd(rs, cmd);
+    Interpreter interp = initInterpreter(rs, args.multiLinePara);
+    if( args.cmd.len!=0 ){
+        evalCmd(interp, args.cmd);
+        deinitSeq(args.cmd);
     }else{
-        enterRepl(rs);
+        enterRepl(interp);
     }
+    return 0;
 
+PHelp:
+    msgl("Version: %s", Version);
+    msgl(HelpMsg);
+    return 0;
+
+PVersion:
+    msgl(Version);
 }
 

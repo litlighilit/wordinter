@@ -21,14 +21,14 @@ to_obj=$(CC) -c
 
 incDirFlag=-I
 
-incDir=$(incDirFlag) $(incDir)
+incDir=$(incDirFlag) $(headerDir)
 #rm=rm
 $(target):$(objs)
 	$(CC) $(CFLAGS) $+ -o $@
 
 
 $(objCache)/%.o:$(src)/%.c
-	$(to_obj) $(CFLAGS) $(incDir) $(src) $^ -o $@
+	$(to_obj) $(CFLAGS) $(incDir) $^ -o $@
 
 
 

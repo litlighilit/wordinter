@@ -83,13 +83,14 @@ void printFcy(int fre){msgl("word frequency: %d", fre);}
 void printPs(){msg(">> ");}
 
 
-void enterRepl(RecSeq data){
-    msgl("entering repl...");
+void enterRepl(const Interpreter interp){
+    char* mode_s = interp.multiLinePara?"multiLinePara":"singleLinePara";
+    msgl("entering repl in %s mode...", mode_s);
     CharSeq line;
     while( printPs(), (line=getLine()), line.len!=0 ){
         int len = line.len;
         line.len = len-1;
-        enum Flag f = evalCmd(data, line);
+        enum Flag f = evalCmd(interp, line);
         if(f==FQuit){
             msgl("bye.");
             break;
@@ -99,7 +100,7 @@ void enterRepl(RecSeq data){
     }
 }
 
-enum Flag evalCmd(const RecSeq data, const CharSeq cmd){
+enum Flag evalCmd(const Interpreter interp, const CharSeq cmd){
     enum Flag ret = FSucc;
     if(cmd.len==0) return FEmptyCmd;
     PairS pair = split2(cmd, ' ');
@@ -116,7 +117,7 @@ enum Flag evalCmd(const RecSeq data, const CharSeq cmd){
             goto Clean;
         }
         char* c_word4qry = cstr(args);
-        queryAll(data, c_word4qry);
+        queryAll(interp, c_word4qry);
         free(c_word4qry);
         break;
     case 1:
@@ -134,7 +135,7 @@ enum Flag evalCmd(const RecSeq data, const CharSeq cmd){
             goto Clean;
         }
 
-        int cnt = countWordOf(data, fname, nPara);
+        int cnt = countWordOf(interp, fname, nPara);
         if(cnt==FileNotFoundErr) warn("not file '%s' found", fname);
         else if(cnt==OverRangeErr) warn("The number %d is out of range", nPara);
         else printCnt(cnt);
@@ -149,7 +150,7 @@ enum Flag evalCmd(const RecSeq data, const CharSeq cmd){
             goto Clean;
         }
         char* c_word4fcy = cstr(args);
-        int fcy = countFrequency(data, c_word4fcy);
+        int fcy = countFrequency(interp, c_word4fcy);
         printFcy(fcy);
         free(c_word4fcy);
 
@@ -159,7 +160,7 @@ enum Flag evalCmd(const RecSeq data, const CharSeq cmd){
         if(args.len==0) fnameOrNULL=NULL;
         else fnameOrNULL=cstr(args);
 
-        int nFiles = listFile(data, fnameOrNULL);
+        int nFiles = listFile(interp, fnameOrNULL);
 
         if(nFiles==0) warn("no file named '%s' found", fnameOrNULL);
         else info("%d files listed", nFiles);

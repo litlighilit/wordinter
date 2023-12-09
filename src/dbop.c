@@ -12,7 +12,7 @@
 
 
 #define next_word(stream) tokenToCharSeq(nextWord(&stream))
-#define next_para(stream) tokenToCharSeq(nextPara(&stream))
+#define next_para(stream, multiLinePara) tokenToCharSeq(nextPara(&stream, multiLinePara))
 
 #define doInPara(para, doWith_Word) do{\
             StrStream wstream = toWordStream(para);\
@@ -29,7 +29,8 @@
 }while(0)
 
 // filterDo(const RecSeq rs, const char* word, doWith_pos) where callback can access `pos`
-#define filterDo(rs, word, doWith_pos) do{\
+#define filterDo(interp, word, doWith_pos) do{\
+    RecSeq rs=interp.db;\
     forIndex(__i, rs){\
         Rec rec = getItem(rs, __i);\
         Pos pos; pos.fname=rec.fname;\
@@ -38,7 +39,7 @@
         StrStream pstream = toParaStream(s);\
         \
         for(int iPara=IDX; ; iPara++){\
-            CharSeq para = next_para(pstream);\
+            CharSeq para = next_para(pstream, interp.multiLinePara);\
             if(para.len==0)break;\
             pos.para=iPara;\
             doInPara(para,\
@@ -52,16 +53,16 @@
     }\
 }while(0)
 
-void queryAll(const RecSeq rs, const char* word){
-    filterDo(rs, word, printPos(pos));
+void queryAll(const Interpreter interp, const char* word){
+    filterDo(interp, word, printPos(pos));
 }
 
 
 #define checkFname(rec, fname) ( strcmp((rec).fname, fname) == 0 )
 
-int countWordOf(const RecSeq rs, const char* fname, int para){
+int countWordOf(const Interpreter interp, const char* fname, int para){
     Rec rec;
-    searchBy(rec, rs, fname, checkFname);
+    searchBy(rec, interp.db, fname, checkFname);
     
     if(strcmp(fname, rec.fname)!=0) return FileNotFoundErr;
     CharSeq fileCont = getData(rec);
@@ -73,7 +74,7 @@ int countWordOf(const RecSeq rs, const char* fname, int para){
     int i=IDX;
     
     while(1){
-        CharSeq seq = next_para(pstream);
+        CharSeq seq = next_para(pstream, interp.multiLinePara);
         if(seq.len==0)goto RangeErr;
         if(i==para){
             Para = copyCharSeq(seq);
@@ -93,15 +94,16 @@ RangeErr:
     return OverRangeErr;
 }
 
-int countFrequency(const RecSeq rs, const char* word){
+int countFrequency(const Interpreter interp, const char* word){
     int cnt=0;
-    filterDo(rs, word, cnt++);
+    filterDo(interp, word, cnt++);
     return cnt;
 }
 
 
-int listFile(const RecSeq rs, const char* fnameOrNULL){
+int listFile(const Interpreter interp, const char* fnameOrNULL){
     int res=0;
+    RecSeq rs = interp.db;
     if(fnameOrNULL==NULL){
         forIndex(idx, rs){
             Rec rec = getItem(rs, idx);

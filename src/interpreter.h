@@ -16,7 +16,9 @@
   addItem(seq, r2);
 
   puts("entering repl...");
-  enterRepl(seq);
+
+  Interpreter interp = initInterpreter(seq, true);
+  enterRepl(interp);
 
 
 */
@@ -26,6 +28,7 @@
 
 #include "types.h"
 #include "strutils.h"
+#include "interptype.h"
 #include "dbop.h"
 #include "msg.h"
 
@@ -39,9 +42,9 @@ enum Flag{
 };
 
 enum Flag
-evalCmd(const RecSeq data, const CharSeq line);
+evalCmd(const Interpreter interp, const CharSeq line);
 
-void enterRepl(RecSeq data);
+void enterRepl(const Interpreter interp);
 
 bool priHelp(int n);
 bool priAlias(int n);

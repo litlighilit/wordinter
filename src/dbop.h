@@ -16,15 +16,17 @@
   addItem(seq, r1);
   addItem(seq, r2);
 
-  char* word = "is";
-  queryAll(seq, word);
+  Interpreter interp = initInterpreter(seq, true);
 
-  int cnt = countWordOf(seq, "f1", 2);
+  char* word = "is";
+  queryAll(interp, word);
+
+  int cnt = countWordOf(interp, "f1", 2);
 
   printf("%d\n", cnt);
 
 
-  int fre = countFrequency(seq, "is");
+  int fre = countFrequency(interp, word);
 
   printf("%d\n", fre);
 
@@ -32,6 +34,7 @@
 */
 #include "types.h"
 #include "streams.h"
+#include "interptype.h"
 
 #include "parseutils.h"
 #include "strimpl.h"
@@ -43,20 +46,20 @@ enum Err{
 };
 
 // query and print all `word` positions in `dr`
-void queryAll(const RecSeq rs, const char* word);
+void queryAll(const Interpreter interp, const char* word);
 
 /* count word numbers in paragragh `para` of file `fname`
 * return -1 if no record with `fname` can be found
 * return -2 if `para` is over range
 */ 
-int countWordOf(const RecSeq rs, const char* fname, int para);
+int countWordOf(const Interpreter interp, const char* fname, int para);
 
 // count `word`'s frequency
-int countFrequency(const RecSeq rs, const char* word);
+int countFrequency(const Interpreter interp, const char* word);
 
 /* list file content if `fnameOrNULL` is not NULL;
  list all file names if `fnameOrNULL` is NULL.
  returns the number of listed items (0 if fname not found)
 */
-int listFile(const RecSeq rs, const char* fnameOrNULL);
+int listFile(const Interpreter interp, const char* fnameOrNULL);
 #endif //#inndef _DBOP_H

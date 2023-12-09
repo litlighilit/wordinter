@@ -55,6 +55,7 @@
 // returns the number of chars skipped
 int skip(const CharSeq s, char skipped, int start);
 
+typedef CharSeq (*ParseFunc)(const CharSeq, char, int);
 
 /* Parses a token and return it.
 */

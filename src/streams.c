@@ -26,9 +26,12 @@ Token nextWord(StrStream* ps){
     );
 }
 
-Token nextPara(StrStream* ps){
+Token nextPara(StrStream* ps, bool multiLineSeq){
+    ParseFunc fp;
+    if(multiLineSeq) fp=parseUntil2;
+    else fp=parseUntil;
     RETnextWith(ps,
-        parseUntil2(ps->data, NL, ps->idx),
+        fp(ps->data, NL, ps->idx),
         skip(ps->data, NL,ps->idx)
     );
 }

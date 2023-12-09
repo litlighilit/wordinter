@@ -29,7 +29,7 @@
   StrStream stream2 = toStrStream(s2);
   
   while(1){
-      CharSeq str = tokenToCharSeq(nextPara(&stream2));
+      CharSeq str = tokenToCharSeq(nextPara(&stream2), true);
       if(str.len==0)break;
       printf("%d: ", str.len);printCharSeq(str);
       deinitSeq(str);
@@ -99,7 +99,7 @@ Token nextToken(StrSepStream* ps);
 Token nextWord(StrStream* ps);
 
 // 
-Token nextPara(StrStream* ps);
+Token nextPara(StrStream* ps, bool multiLineSeq);
 
 #define rewindStream(stream) do{\
   stream.idx=0;\
