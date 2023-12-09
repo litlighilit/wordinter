@@ -1,0 +1,6 @@
+/build
+/src/.vscode
+/test/cache/
+/test/test_data
+__pycache__
+src/__nouse
