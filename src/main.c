@@ -28,10 +28,10 @@ int main(int argc, char* argv[]){
 
     Interpreter interp = initInterpreter(rs, args.multiLinePara);
     if( args.cmd.len!=0 ){
-        evalCmd(interp, args.cmd);
+        evalCmd(&interp, args.cmd);
         deinitSeq(args.cmd);
     }else{
-        enterRepl(interp);
+        enterRepl(&interp);
     }
     return 0;
 

@@ -42,9 +42,9 @@ enum Flag{
 };
 
 enum Flag
-evalCmd(const Interpreter interp, const CharSeq line);
+evalCmd(Interpreter* interp, const CharSeq line);
 
-void enterRepl(const Interpreter interp);
+void enterRepl(Interpreter* interp);
 
 bool priHelp(int n);
 bool priAlias(int n);
