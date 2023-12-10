@@ -6,7 +6,8 @@
 #define HelpMsg  "\
 desc: a file-based search engine\n\
 usage: \n\
-  THIS [FLAG] DIR [-c, --code CODE]\n\
+  THIS [FLAG] DIR         \tenter REPL\n\
+  THIS [FLAG] DIR -c CODE \trun CODE and exit\n\
     FLAG: \n\
       -l\tsingle line mode, treat each line as a paragragh\n\
       -L\tmultiline mode, only if there are more than 1 newline,\n\
