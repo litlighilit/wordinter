@@ -8,7 +8,7 @@
   CharSeq s = charpToSeq("a   String");
 
   CharSeq ss = parseUntil(s, ' ', 0);
-  printCharSeq(ss); //-> a
+  printlnCharSeq(ss); //-> a
 
   deinitSeq(ss); // ss.data destoryed
 
@@ -16,7 +16,7 @@
   printf("%d\n", n); //-> 3
 
   ss = parseUntil(s, ' ', ss.len+n);
-  printCharSeq(ss); //-> String
+  printlnCharSeq(ss); //-> String
 
   deinitSeq(ss);
   deinitSeq(s);
@@ -25,7 +25,7 @@
   CharSeq s2 = charpToSeq("a,String");
 
   CharSeq ss2 = parseUntilPunc(s2, 0);
-  printCharSeq(ss2);
+  printlnCharSeq(ss2);
   
   int n2 = skipPunc(s2, ss2.len);
   printf("%d\n", n2);
@@ -39,7 +39,7 @@
 
   CharSeq ss3 = parseUntil2(s2, ' ', 0);
 
-  printf("%d: ", ss3.len);printCharSeq(ss3);
+  printf("%d: ", ss3.len);printlnCharSeq(ss3);
   
   int n3 = skip(s3, ' ',ss3.len);
 

@@ -11,7 +11,7 @@
   while(1){
       CharSeq str = tokenToCharSeq(nextWord(&stream));
       if(str.len==0)break;
-      printf("%d: ", str.len);printCharSeq(str);
+      printf("%d: ", str.len);printlnCharSeq(str);
       deinitSeq(str);
   }
   //-> 4: This
@@ -31,7 +31,7 @@
   while(1){
       CharSeq str = tokenToCharSeq(nextPara(&stream2), true);
       if(str.len==0)break;
-      printf("%d: ", str.len);printCharSeq(str);
+      printf("%d: ", str.len);printlnCharSeq(str);
       deinitSeq(str);
   }
   //-> 4: This

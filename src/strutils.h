@@ -7,14 +7,14 @@
 
 // # split2
   PairS p = split2(s, ' ');
-  printCharSeq(p.left); //-> The
-  printCharSeq(p.right); //-> order is 3
+  printlnCharSeq(p.left); //-> The
+  printlnCharSeq(p.right); //-> order is 3
 
   freePairS(p);
 
 // # strSlice
   CharSeq ss = strSlice(s, s.len-4);
-  printCharSeq(ss); //-> is 3
+  printlnCharSeq(ss); //-> is 3
 
 // # parseInt
   CharSeq s3 = strSlice(s, s.len-2);
@@ -26,7 +26,7 @@
 // # getLine
   puts("input something:");
   CharSeq line = getLine();
-  printCharSeq(line);
+  printlnCharSeq(line);
 
   deinitSeq(line);
 */

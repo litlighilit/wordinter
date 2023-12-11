@@ -120,7 +120,7 @@ int listFile(const Interpreter interp, const char* fnameOrNULL){
         if(rec.fname==NULL) return 0;
 
         printf("%s: \n", rec.fname);
-        printCharSeq(rec.data);
+        printlnCharSeq(rec.data);
         res++;
 
     }
