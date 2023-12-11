@@ -147,7 +147,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         free(c_word4qry);
         break;
     case 1:
-        PairS si = split2(pair.right, ' ');
+        ;PairS si = split2(pair.right, ' ');
         int nPara;
 
         char*fname = cstr(si.left);
@@ -182,7 +182,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
 
         break;
     case 3:
-        char*fnameOrNULL;
+        ;char*fnameOrNULL;
         if(args.len==0) fnameOrNULL=NULL;
         else fnameOrNULL=cstr(args);
 
@@ -230,7 +230,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         break;
 
     default:
-        char* c_key=cstr(key);
+        ;char* c_key=cstr(key);
         warn("unknow command %s, type \"%s\" for help", c_key, HLP);
         free(c_key);
         ret = FUnknowCmd;

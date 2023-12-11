@@ -85,7 +85,7 @@ int countWordOf(const Interpreter interp, const char* fname, int para){
     }
 
 CountWord:
-    int cnt = 0;
+    ;int cnt = 0;
     doInPara(Para, cnt++);
     deinitSeq(Para);
     return cnt;
