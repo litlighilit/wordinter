@@ -209,14 +209,16 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         info("switch to mode '%s'", getModeS(pinterp));
         break;
     case 5:
-    #define PRI(dest) \
+    #define PRI(dest) do{\
         if(args.len==0){\
             msgl("all %s:", #dest);\
             for(int i=0; i<N_CMD; i++) pri##dest(i);\
         }else{\
-            if(cmdOrd(args)==-1) warn("unknow %s", #dest);\
-            else pri##dest(ord);\
-        }
+            int _destOrd = cmdOrd(args);\
+            if(_destOrd==-1) warn("unknow %s", #dest);\
+            else pri##dest(_destOrd);\
+        }\
+    }while(0);
 
         PRI(Help)
         break;
