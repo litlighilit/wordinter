@@ -24,8 +24,11 @@
 
 typedef Seq(char) CharSeq;
 
+// no newline
+#define priCharSeq(s) forEach(s, putchar)
+
 #define printCharSeq(s) do{\
-    forEach(s, putchar);\
+    priCharSeq(s);\
     putchar('\n');\
 }while(0)
 

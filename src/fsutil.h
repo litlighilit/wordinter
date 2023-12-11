@@ -19,18 +19,7 @@
 
 #include <stdio.h>
 #include "types.h"
-
-
-#define WIN_OS_SEP '\\'
-#define UNIX_OS_SEP '/'
-
-#define isOsSep(c) (c==WIN_OS_SEP || c==UNIX_OS_SEP)
-
-#ifdef _WIN32 // Win32 or Win64
-#define OS_SEP WIN_OS_SEP
-#else
-#define OS_SEP UNIX_OS_SEP
-#endif // _WIN32
+#include "cstrutils.h"
 
 
 /* list data in files of `dir` and returns
@@ -42,7 +31,5 @@ RecSeq listDir(const char* dir);
 CharSeq readAll(FILE* f);
 
 
-// join dir, fname and returns a new string
-char* joinPath(const char* dir, const char*fname);
 
 #endif //#ifndef _FSUTIL_H

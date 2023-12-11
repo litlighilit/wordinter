@@ -21,32 +21,6 @@ CharSeq readAll(FILE* f){
 }
 
 
-char* _newStr(const char* s){
-    char*res=malloc(strlen(s)+1);
-    strcpy(res,s);
-    return res;
-}
-
-char* joinPath(const char* dir, const char*fname){
-    size_t dLen = strlen(dir);
-    char last = dir[dLen-1];
-    size_t resLen = dLen+strlen(fname)+1;
-
-    char*res;
-    if(!isOsSep(last)){
-        res=malloc(++resLen);
-        strcpy(res, dir);
-        res[dLen]=OS_SEP;
-        res[dLen+1]='\0';
-    }else{
-        res=malloc(resLen);
-        strcpy(res, dir);
-    }
-    strcat(res, fname);
-    return res;
-}
-
-
 RecSeq listDir(const char* dir){
     RecSeq res;
     initSeq(Rec, res);
@@ -74,7 +48,7 @@ RecSeq listDir(const char* dir){
         fclose(f);
 
         Rec rec;
-        rec.fname = _newStr(fname);
+        rec.fname = newCStr(fname);
         rec.data = content;
 
         addItem(res, rec);
