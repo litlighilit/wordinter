@@ -14,8 +14,8 @@ CharSeq charpToSeq(const char* p){
     CharSeq res;
     //initSeq(char, res);
     res.len = strlen(p);
-    res.data = malloc(res.len);
-    res.cap = res.len;
+    res.cap = res.len+1;// avoid crash if addItem
+    res.data = malloc(res.cap);
     memcpy(res.data, p, res.len);
     return res;
 }
