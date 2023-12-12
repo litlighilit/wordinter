@@ -119,7 +119,9 @@ int listFile(const Interpreter interp, const char* fnameOrNULL){
 
         if(rec.fname==NULL) return 0;
 
-        printf("%s: \n", rec.fname);
+        printf("%s\n", rec.fname);
+        for(int _=0; _<strlen(rec.fname); _++) putchar('=');
+        putchar('\n');
         printlnCharSeq(rec.data);
         res++;
 
