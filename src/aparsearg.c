@@ -9,7 +9,7 @@
 
 bool AlwaysGoOn(const char* _){return true;}
 
-inline ArgParser newArgParser(int argc, char* argv[],
+ArgParser newArgParser(int argc, char* argv[],
      const char* helpOrNul
 ){
     ArgParser res = malloc(sizeof(ArgParserObj));
