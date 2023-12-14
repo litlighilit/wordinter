@@ -13,6 +13,22 @@
 
 int main(int argc, char* argv[]){
     
+    #define K(arr) arr[1] // get "-x"'s 'x'
+    const char singLineP = K(singleLineParaFlag);
+    const char filesK = K(filesKey);
+    const char codesK = K(codesKey);
+    #undef K
+
+    ProjInfo INFO = (ProjInfo){
+        .auther=Author, 
+        .license=License,
+
+        .proj=Proj,
+        .version=Version,
+        .desc=Desc,
+        //.usages=... // will (and have to be) set within `main` function
+    };
+
     ArgParser parser = newArgParser(argc, argv, detailsHelp);
 
     INFO.usages = genUsage(); 

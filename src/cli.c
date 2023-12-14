@@ -2,7 +2,7 @@
 #include "cli.h"
 
 Args initArgs(){
-    Args res={};
+    Args res={0};
     res.multiLinePara = true;
     CharSeq s, s2;
     initSeq(char, s);

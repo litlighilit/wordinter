@@ -112,7 +112,7 @@ int listFile(const Interpreter interp, const char* fnameOrNULL){
         }
     }else{
         const char*fname = fnameOrNULL;
-        Rec rec={};
+        Rec rec={0};
         #define cmp(rec, fname) (strcmp(rec.fname, fname)==0)
         searchBy(rec, rs, fname, cmp);
         #undef cmp

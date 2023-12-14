@@ -41,7 +41,7 @@ void freeArgParser(ArgParser parser){
 }
 
 ParseArgRes newParseArgRes(){
-    ParseArgRes res = {};
+    ParseArgRes res = {0};
     initSeq(CharSeq, res.args);
     for(int i=0; i<MapLen; i++) initSeq(CharSeq, res.keyListvals[i]);
     res.err=NULL;

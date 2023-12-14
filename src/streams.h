@@ -52,8 +52,8 @@
 #include "strimpl.h"
 #include "parseutils.h"
 
-#define NL '\n' // XXX: data is treated to contain no '\r'\
-ensured by "fsutil"'s readAll
+#define NL '\n' // XXX: data is treated to contain no '\r'
+                //  ensured by "fsutil"'s readAll
 
 typedef CharSeq Token;
 
