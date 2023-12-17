@@ -6,6 +6,13 @@
 
 #define loopMapLen(var) for(int var=0; var<MapLen; var++)
 
+#define IND "  " //indent
+
+#define strAppendp(seq, p) do{\
+    for(int i=0; i<strlen(p); i++){\
+      addItem((seq), p[i]);\
+    }\
+}while(0)
 
 bool AlwaysGoOn(const char* _){return true;}
 
@@ -15,8 +22,11 @@ ArgParser newArgParser(int argc, char* argv[],
     ArgParser res = malloc(sizeof(ArgParserObj));
     res->preArgHook=AlwaysGoOn;
     CharSeq helps;
-    if(helpOrNul!=NULL) helps=charpToSeq(helpOrNul);
-    else initSeq(char, helps);
+    if(helpOrNul!=NULL){
+        helps=charpToSeq("helps:\n"IND);
+        strAppendp(helps, helpOrNul);
+        addItem(helps, '\n');
+    } else initSeq(char, helps);
     res->helps = helps;
 
     res->argc = argc;
@@ -95,12 +105,6 @@ void addListKey(ArgParser parser, char shortKey, const char*name, const char* he
     parser->listKeyAdded[_MapOrd(shortKey)] = (NamedHelp){name,help};
 }
 
-#define strAppendp(seq, p) do{\
-    for(int i=0; i<strlen(p); i++){\
-      addItem((seq), p[i]);\
-    }\
-}while(0)
-
 #define tab3 "\t\t\t"
 void addArgHelp(ArgParser parser, const char* itemName, const char* help){
     assert(help!=NULL);
@@ -113,7 +117,7 @@ void addArgHelp(ArgParser parser, const char* itemName, const char* help){
     }
      
         
-    strAppendp(parser->helps, "  "); // indent
+    strAppendp(parser->helps, IND); // indent
     char* prehelp = catCStr(itemName, tab3);
     char* thehelp = catCStr(prehelp, help);
 
@@ -226,7 +230,6 @@ ParseArgRes parseArgs(ArgParser parser){
 }
 
 
-#define IND "  " //indent
 #define tab "\t"
 #define tab2 tab tab
 void printAllArgsHelp(ArgParser parser){

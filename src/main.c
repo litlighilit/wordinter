@@ -78,7 +78,7 @@ int main(int argc, char* argv[]){
         // do not free(cfilepath) and deinitSeq(char, content), as they're owned by rec now.
 
     }
-    if(!hasInput) err("neither a dir nor some files is passed. please pass some input data");
+    if(!hasInput) err("neither a dir nor some files is passed. please pass some input data (pass `-h` for details)");
 
 
     bool b=wantOpt(args, singLineP); // here, cause as we consider -L as default, this wantOpt can make what we want
