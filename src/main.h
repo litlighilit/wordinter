@@ -2,18 +2,6 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
-#define ProjName "WordInter"
-#define HelpMsg  "\
-desc: a file-based search engine\n\
-usage: \n\
-  THIS [FLAG] DIR         \tenter REPL\n\
-  THIS [FLAG] DIR -c CODE \trun CODE and exit\n\
-    FLAG: \n\
-      -l\tsingle line mode, treat each line as a paragragh\n\
-      -L\tmultiline mode, only if there are more than 1 newline,\n\
-        \tthen they are treated as two paragraphs  [default mode]\
-"
-
 #define Author "litlighilit(lcm)"
 #define License "GPLv3"
 #define Version "1.0.0"
