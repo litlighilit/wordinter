@@ -16,7 +16,7 @@
 
 bool AlwaysGoOn(const char* _){return true;}
 
-ArgParser newArgParser(int argc, char* argv[],
+ArgParser newArgParser(int argc, char* const argv[],
      const char* helpOrNul
 ){
     ArgParser res = malloc(sizeof(ArgParserObj));
@@ -74,7 +74,7 @@ void freeParseArgRes(ParseArgRes res){
 void addArgMap(ArgParser parser, char shortOpt, const char* longOpt){
     assert( checkOption(shortOpt) );
 
-    const char**const map = parser->map;
+    const char** map = parser->map;
     int nhash = _MapOrd(shortOpt);
     assert(map[nhash]==NULL); // avoid overwrite
 
@@ -131,7 +131,7 @@ void addArgHelp(ArgParser parser, const char* itemName, const char* help){
 ParseArgRes parseArgs(ArgParser parser){
     ParseArgRes res=newParseArgRes();
 
-    char** argv = parser->argv;
+    char* const* argv = parser->argv;
     for(int i=1; i < parser->argc; i++){
         char* longOpt = NULL; // for message feedback for error
         const char* arg = argv[i];

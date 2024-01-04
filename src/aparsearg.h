@@ -111,7 +111,7 @@ typedef struct{
 } NamedHelp;
 
 typedef struct {
-    char** argv;
+    char* const * argv;
     int argc;
     bool (*preArgHook)(const char* arg); // not NULL. returns if go on. i.e. if false then exit
     CharSeq helps;
@@ -125,8 +125,14 @@ typedef struct {
 
 typedef ArgParserObj* ArgParser;
 
-
-ArgParser newArgParser(int argc, char* argv[],
+/**
+ @param argc like `main` function's argc
+ @param argv like `main` function's argv
+ @param helpOrNul a help string. Passing a `NULL` means no help string,
+ @returns a new @ref ArgParser
+ @post free the returned parser via @ref freeArgParser
+*/
+ArgParser newArgParser(int argc, char* const argv[],
      const char* helpOrNul);
 
 void freeArgParser(ArgParser parser);
