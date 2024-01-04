@@ -37,6 +37,7 @@ int findChar(const char* s, char c){
 
 char* joinPath(const char* dir, const char*fname){
     size_t dLen = strlen(dir);
+    if(dLen==0) return newCStr(fname);
     char last = dir[dLen-1];
     size_t resLen = dLen+strlen(fname)+1;
 
