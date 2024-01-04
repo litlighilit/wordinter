@@ -51,11 +51,10 @@
 #define setItem(seq, idx, val) do{ (seq).data[idx]=val;}while(0)
 
 #else 
-#error "can't be used yet"
 #include <stdio.h>
-int RangeError(){ fputs("RangeError", stderr); exit(-1); return NULL; }
-#define getItem(seq, idx) (idx<seq.len?seq.data[idx]:RangeError())
-#define setItem(seq, idx, val) do{ if(idx>=seq.len)RangeError(); seq.data[idx]=val;}while(0)
+void IndexError(const char*seqName, int idx, int len){ fprintf(stderr, "IndexError: index of `%d` out of range of seq `%s`(len=%d) ", idx, seqName, len); exit(-1); }
+#define getItem(seq, idx) (idx<seq.len?seq.data[idx]:IndexError(#seq, idx, seq.len),seq.data[idx])
+#define setItem(seq, idx, val) do{ if(idx>=seq.len)IndexError(#seq, idx, seq.len); seq.data[idx]=val;}while(0)
 #endif // #ifndef SEQ_CHECK_RANGE
 
 
