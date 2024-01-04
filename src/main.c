@@ -68,14 +68,11 @@ int main(int argc, char* argv[]){
         hasInput=true;
         CharSeq filepath=getItem(files, i);
         char*cfilepath=cstr(filepath);
-        FILE* fp = fopen(cfilepath, "r");
-        if(fp==NULL){
+        if(!pushRec(&rs, "", cfilepath)){
             warn("can't read '%s' ...", cfilepath);
         }
-        CharSeq content = readAll(fp);
-        Rec rec={.fname=cfilepath, .data=content};
-        addItem(rs, rec);
-        // do not free(cfilepath) and deinitSeq(char, content), as they're owned by rec now.
+        free(cfilepath);
+        // do not deinitSeq(char, filepath), as they're owned by args.
 
     }
     if(!hasInput) err("neither a dir nor some files is passed. please pass some input data (pass `-h` for details)");
@@ -105,6 +102,7 @@ int main(int argc, char* argv[]){
     deInfo(INFO);
     freeParseArgRes(args);
     freeArgParser(parser);
+    freeListDir(rs);
     return 0;
 
 }

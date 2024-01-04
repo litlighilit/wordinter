@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "fsutil.h"
+#include "cstrutils.h"
 
 CharSeq readAll(FILE* f){
     CharSeq res;
@@ -20,26 +21,32 @@ CharSeq readAll(FILE* f){
 }
 
 
-// can't easly deined as a func
-// a tricky macro with a `continue` stmt
-#define PushResWithName(res, fname) do{\
-        char* fpath = joinPath(dir, fname);\
-        FILE* f=fopen(fpath, "r");\
-        free(fpath);\
-        if(f==NULL){\
-            continue;\
-        }\
-        CharSeq content = readAll(f);\
-        fclose(f);\
-        \
-        Rec rec;\
-        rec.fname = newCStr(fname);\
-        rec.data = content;\
-        \
-        addItem(res, rec);\
-}while(0);
 
+bool pushRec(RecSeq*p, const char* dir, const char* fname){
+    bool res=true;
+    printf(fname);
+    char* fpath = joinPath(dir, fname);
+    printf("\t%p\n", fname);
+    FILE* f=fopen(fpath, "r");
+    if(f==NULL){
+        res = false;
+        goto End;
+    }
+    CharSeq content = readAll(f);
+    fclose(f);
+    
+    Rec rec;
+    rec.fname = newCStr(fname);
+    rec.data = content;
+    
+    pAddItem(p, rec);
+    End:
+    free(fpath);
+    return res;
+}
 
+// skip . and ..
+bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
 #ifdef _MSC_VER
 #include <io.h>
 
@@ -58,10 +65,10 @@ RecSeq listDir(const char* dir){
     int k;
     do {
         char*fname = fileInfo.name;
-        if(strcmp(fname, ".")==0 || strcmp(fname, "..")==0){
+        if(shallSkip(fname)){
             goto Next;
         }
-        PushResWithName(res, fname)
+        pushRec(&res, dir, fname);
         
         Next:
         k = _findnext(handle, &fileInfo);
@@ -89,9 +96,9 @@ RecSeq listDir(const char* dir){
         //if(dire->d_type == DT_DIR) continue;
         char* fname=dire->d_name;
 
-        if(strcmp(fname, ".")==0 || strcmp(fname, "..")==0) continue;
+        if(shallSkip(fname)) continue;
 
-        PushResWithName(res, fname)
+        pushRec(&res, dir, fname);
 
     }
     closedir(dp);
@@ -101,3 +108,13 @@ RecSeq listDir(const char* dir){
 
 
 #endif
+
+
+void freeListDir(RecSeq rs){
+    forIndex(i, rs){
+        Rec r = getItem(rs, i);
+        free(r.fname);
+        deinitSeq(r.data);
+    }
+    deinitSeq(rs);
+}

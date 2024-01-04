@@ -46,6 +46,15 @@
     }\
 }while(0)
 
+#define pAddItem(seqp, item) do{\
+    (seqp)->data[(seqp)->len]=item;\
+    (seqp)->len++; \
+    if((seqp)->len==(seqp)->cap){  \
+        (seqp)->cap*=2; \
+        (seqp)->data = realloc((seqp)->data, (seqp)->cap);\
+    }\
+}while(0)
+
 #ifndef SEQ_CHECK_RANGE
 #define getItem(seq, idx) ((seq).data[idx])
 #define setItem(seq, idx, val) do{ (seq).data[idx]=val;}while(0)
