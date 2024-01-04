@@ -13,6 +13,7 @@
     T*data;\
     int len;\
     int cap;\
+    int itemSize;\
 }
 
 #define getData(seq) (seq.data)
@@ -21,6 +22,7 @@
     (seq).data=(T*)malloc(DEF_SEQ_CAP*sizeof(T)); \
     (seq).cap = DEF_SEQ_CAP; \
     (seq).len=0;\
+    (seq).itemSize=sizeof(T);\
 }while(0);
 
 #define initSeqOfLen(T, seq, len) do{\
@@ -42,7 +44,7 @@
     (seq).len++; \
     if((seq).len==(seq).cap){  \
         (seq).cap*=2; \
-        (seq).data = realloc((seq).data, (seq).cap);\
+        (seq).data = realloc((seq).data, (seq).cap*(seq).itemSize);\
     }\
 }while(0)
 
@@ -51,7 +53,7 @@
     (seqp)->len++; \
     if((seqp)->len==(seqp)->cap){  \
         (seqp)->cap*=2; \
-        (seqp)->data = realloc((seqp)->data, (seqp)->cap);\
+        (seqp)->data = realloc((seqp)->data, (seqp)->cap*(seqp)->itemSize);\
     }\
 }while(0)
 
