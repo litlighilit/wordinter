@@ -10,10 +10,11 @@
 #include "seq.h"
 #include "strimpl.h"
 
+/// Position of a word
 typedef struct{
-    char* fname; // filename
-    int para;
-    int idx; // word index of one paragragh
+    char* fname; ///< file name
+    int para; ///< paragraph index
+    int idx; ///< word index of one paragragh
 } Pos;
 
 typedef Seq(Pos) PosSeq;
@@ -25,7 +26,7 @@ typedef Seq(Pos) PosSeq;
 typedef struct{
     char*fname;
     CharSeq data;
-} Rec; // record
+} Rec; ///< record of file data
 
 
 typedef Seq(Rec) RecSeq;

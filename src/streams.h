@@ -1,7 +1,7 @@
 
 #ifndef _STREAMS_H
 #define _STREAMS_H
-
+/// @file stream.h
 /*doctest:
 
 // ## using stream in a C-style
@@ -92,13 +92,17 @@ typedef struct{
     }\
 }while(0)
 
-// return empty token if encounter sep in the begining
+/// @retval `an empty token` if encounter sep in the begining
 Token nextToken(StrSepStream* ps);
 
-// ignore ps->sep and treat all punctuations as sep
+/// @note ignore ps->sep and treat all punctuations as sep
+/// @returns a token of a word (may empty if met end)
 Token nextWord(StrStream* ps);
 
-// 
+/// @brief get next paramgragh
+/// @param ps pointer to @ref StrStream
+/// @param multiLineSeq whether not to treat one line as a paragragh 
+/// @returns a token of a paragragh (may empty if met end)
 Token nextPara(StrStream* ps, bool multiLineSeq);
 
 #define rewindStream(stream) do{\

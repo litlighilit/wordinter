@@ -1,7 +1,9 @@
 
 #ifndef _INTERPRETER_H
 #define _INTERPRETER_H
-
+/**
+ @file interpreter.h
+*/
 /*doctest:
   RecSeq seq;
   initSeq(Rec, seq);
@@ -32,6 +34,7 @@
 #include "dbop.h"
 #include "msg.h"
 
+/// flag used to show @ref evalCmd status
 enum Flag{
     FQuit=-1,
     FSucc,
@@ -41,13 +44,28 @@ enum Flag{
     FEmptyCmd,
 };
 
+/** feed @p line command to @p interp to evaluate
+  @param[in,out] interp
+  @param line command line to evaluate
+  @returns evaluation flag
+*/
 enum Flag
 evalCmd(Interpreter* interp, const CharSeq line);
 
+/// enter REPL (Repeat Evaluate and Print Loop)
 void enterRepl(Interpreter* interp);
 
+/// @brief print help of @p n cmd
+/// @param n order of cmd to print
+/// @returns if success (whether @p n is in valid range)
 bool priHelp(int n);
+
+
+/// @brief print alias of @p n cmd
+/// @param n order of cmd to print
+/// @returns if success (whether @p n is in valid range)
 bool priAlias(int n);
 
+/// get order of @p cmd
 int cmdOrd(const CharSeq cmd);
 #endif //#ifndef _INTERPRETER_H

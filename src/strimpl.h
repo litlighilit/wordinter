@@ -38,7 +38,7 @@ typedef Seq(char) CharSeq;
     putchar('\n');\
 }while(0)
 
-// a CharSeq as the format string
+/// @param s a CharSeq as the format string
 #define printfCharSeq(s,...) do{\
     char*cs=cstr(s);\
     printf(cs,##__VA_ARGS__);\
@@ -47,11 +47,12 @@ typedef Seq(char) CharSeq;
 
 CharSeq charpToSeq(const char* p);
 
-// return a new c-string
+/// @returns a new c-string
 char* cstr(const CharSeq s);
 
 CharSeq copyCharSeq(const CharSeq s);
-
+ 
+/// @returns whether the content of @p seq is equal to that of @p s
 bool seqEqStr(const CharSeq seq, const char* s);
 
 #endif //#ifndef _STRUTILS_H

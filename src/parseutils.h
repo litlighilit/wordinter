@@ -1,7 +1,7 @@
 
 #ifndef _PARSEUTIL_H
 #define _PARSEUTIL_H
-
+/// @file parseutils.h
 /*doctest:
 
 // # for one certain char
@@ -52,20 +52,22 @@
 */
 #include <stdbool.h>
 #include "strimpl.h"
-// returns the number of chars skipped
+
+/// @returns the number of chars skipped
 int skip(const CharSeq s, char skipped, int start);
 
 typedef CharSeq (*ParseFunc)(const CharSeq, char, int);
 
-/* Parses a token and return it.
+/** Parses a token and return it.
 */
 CharSeq parseUntil(const CharSeq s, char until, int start);
 
-// XXX: space is treated as a punctuation too
+/// XXX: space is treated as a punctuation too
 int skipPunc(const CharSeq, int start);
 
 CharSeq parseUntilPunc(const CharSeq s, int start);
 
+/// parse until two @p until characters are met
 CharSeq parseUntil2(const CharSeq s, char until, int start);
 
 #endif //#ifndef _PARSEUTIL_H

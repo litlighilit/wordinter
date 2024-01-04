@@ -2,10 +2,13 @@
 #ifndef _APARSEARG_H
 #define _APARSEARG_H
 
-/* ascii ahpha parse cmdline argument
-  for opt arg, only one char is stored. e.g. -A is a oppsite flag of -a
+/**
+  @file aparsearg.h
+  @brief ascii ahpha parse cmdline argument
+  
+  @note for opt arg, only one char is stored. e.g. -A is a oppsite flag of -a
 
-  latter arg value will overwrite the former value
+  @attention latter arg value will overwrite the former value
 */
 
 /*doctest:
@@ -106,14 +109,14 @@ typedef Seq(CharSeq) ArgsSeq;
 #define checkOpOption IS_UPPER
 
 typedef struct{
-    const char* name; //not NULL
-    const char* help; //not NULL
+    const char* name; ///< not NULL
+    const char* help; ///< not NULL
 } NamedHelp;
 
 typedef struct {
     char* const * argv;
     int argc;
-    bool (*preArgHook)(const char* arg); // not NULL. returns if go on. i.e. if false then exit
+    bool (*preArgHook)(const char* arg); ///< not NULL. returns whether to go on. i.e. if false then exit
     CharSeq helps;
     const char* map[MapLen]; // not begins with "--"
     // XXX: the following use the same map.
@@ -123,6 +126,13 @@ typedef struct {
 
 } ArgParserObj;
 
+/**
+ 
+
+ for all `add*(ArgParser parser, char shortName, ... )` functions: 
+ @note @p shortName must be unique for each @p parser
+ @warning *panic* if @p shortName has alreadly mapped before
+*/
 typedef ArgParserObj* ArgParser;
 
 /**
@@ -137,23 +147,39 @@ ArgParser newArgParser(int argc, char* const argv[],
 
 void freeArgParser(ArgParser parser);
 
-/* panic: if `shortName` has alreadly mapped before
+/**
+ add argument mapping from long name to short one
+ @note @p shortName must be unique for each @p parser
+ @warning *panic* if @p shortName has alreadly mapped before
 */
 void addArgMap(ArgParser parser, char shortName, const char* longName);
 
-// add bool option, when prasing, upper char means false
+/// add bool option, when prasing, upper char means false. For notable matters, see @ref addArgMap
 void addBoolOpt(ArgParser parser, char shortOpt, 
     const char* helpOrNull);
 
-// XXX: name and help can't be NULL, used to print help
+/** add a key-val argument to parse
+ @note name and help can't be NULL, used to print help.
+
+ For notable matters, see @ref addArgMap
+*/
 void addKey(ArgParser parser, char shortKey, const char* name,
     const char* help);
 
+/** add a key-val argument to parse, which can be given multiply times
+ @note @p name and @p help can't be `NULL`, used to print help.
+
+ For notable matters, see @ref addArgMap
+*/
 void addListKey(ArgParser parser, char shortKey, const char* name,
     const char* help);
 
+/** add help for @p itemName
+ @note this function does nothing with parsing process, just adding help string for @ref printAllArgsHelp
+*/
 void addArgHelp(ArgParser parser, const char* itemName, const char* help);
 
+/// print all help string of options, key-val argument and position argument
 void printAllArgsHelp(ArgParser parser);
 
 typedef struct {
@@ -167,12 +193,17 @@ typedef struct {
 ParseArgRes parseArgs(ArgParser);
 void freeParseArgRes(ParseArgRes res);
 
+/// returns whether @p opt is given
 #define wantOpt(parseArgRes, opt) (parseArgRes.options[_MapOrd(opt)])
-#define getVal(parseArgRes, key) (parseArgRes.keyvals[_MapOrd(key)])
+
+
+#define getVal(parseArgRes, key) (parseArgRes.keyvals[_MapOrd(key)]) ///< returns a c-string[borrowed]. i.e. `char*`
+
+/// returns a @ref ListArg [borrowed]
 #define getListVal(parseArgRes, key) (parseArgRes.keyListvals[_MapOrd(key)])
 
 
-#define DefVer "0.0.1"
+#define DefVer "0.0.1" ///< default version used when not given
 #define DefLicense "MIT"
 
 typedef Seq(CharSeq) UsageSeq;
@@ -183,12 +214,13 @@ typedef struct {
 } Usages;
 
 
-/* 
-XXX: not thread-safe, use static data
-*/
-Usages newUsages(const char* nullEnded[]);
-void addUsage(Usages*, const char*);
-// all argument shall be `char*`
+/// initalize a @ref Usages object with an array of c-string
+Usages newUsages(const char* nullEnded[]/**a c-string array, terminated by `NULL`*/);
+
+/// add @p usage string to a @ref Usages pointer @p p
+void addUsage(Usages*p, const char*usage);
+
+/// @note all argument shall be const c-string. i.e. `const char*`
 #define USAGES(...) newUsages((const char*[]){__VA_ARGS__,NULL})
 
 typedef struct{
@@ -202,10 +234,12 @@ typedef struct{
 
 void printProjInfo(ProjInfo);
 
-/* 
-XXX: not thread-safe, use global-scope obj to communicate between functions
+/** attch information to @p parser
+ @post free memory via @ref deInfo
+ @note not thread-safe, use global-scope obj to communicate between functions
 */
 void enInfo(ArgParser parser, ProjInfo info);
 
+/// @pre free data allocated by @ref enInfo
 void deInfo(ProjInfo info);
 #endif //#ifndef _ALPARSEARG_H

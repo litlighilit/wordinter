@@ -2,6 +2,13 @@
 #ifndef _STRUTILS_H
 #define _STRUTILS_H
 
+/**
+ @file strutils.h
+ @brief string utilities
+
+ utilities of @ref CharSeq
+*/ 
+
 /*doctest: include("<assert.h>")
   CharSeq s = charpToSeq("The order is 3");
 
@@ -45,18 +52,23 @@ typedef struct {
 }while(0)
 
 
-/*if eof, return an empty CharSeq (len==0)
-otherwise, result includes newline char*/
+/** get a line from `stdin`
+ @retval `an empty CharSeq` if eof
+ @retval a @ref CharSeq that includes newline char*/
 CharSeq getLine();
 
-/* like Python's s.split(sep, 1)
-but will treat all successive `seq` as one*/
+/** like Python's `s.split(sep, 1)`
+but will treat all successive @p sep as one*/
 PairS split2(const CharSeq s, char sep);
 
 CharSeq strAdd(const CharSeq s1, const CharSeq s2);
 
 CharSeq strSlice(const CharSeq s, int a);
 
+/// parse @p s as an intergar
+/// @param s 
+/// @param[in] res a pointer to store result interger
+/// @returns whether is successful
 bool parseInt(const CharSeq s, int*res);
 
 #endif //#ifndef _STRUTILS_H

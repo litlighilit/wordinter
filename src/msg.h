@@ -16,7 +16,7 @@
     printf(msg ,##__VA_ARGS__);\
 }while(0)
 
-// message with newline
+/// message with newline
 #define msgl(msg,...) do{\
   msgNoNL(msg, ## __VA_ARGS__);\
   _pNL\

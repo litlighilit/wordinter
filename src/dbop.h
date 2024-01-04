@@ -2,7 +2,12 @@
 #ifndef _DBOP_H
 #define _DBOP_H
 
-// data base operations
+/**
+ @file dbop.h
+ @brief data base operations
+ @details some functions to operate @ref Interpreter
+*/
+
 /*doctest:
   RecSeq seq;
   initSeq(Rec, seq);
@@ -45,21 +50,26 @@ enum Err{
   OverRangeErr = -2
 };
 
-// query and print all `word` positions in `dr`
+/// query and print all @p word positions
 void queryAll(const Interpreter interp, const char* word);
 
-/* count word numbers in paragragh `para` of file `fname`
-* return -1 if no record with `fname` can be found
-* return -2 if `para` is over range
+/** count word numbers in paragragh @p para of file @p fname
+* @retval -1 if no record with @p fname can be found
+* @retval -2 if @p para is over range
 */ 
 int countWordOf(const Interpreter interp, const char* fname, int para);
 
-// count `word`'s frequency
+/// count the frequency of @p word
 int countFrequency(const Interpreter interp, const char* word);
 
-/* list file content if `fnameOrNULL` is not NULL;
- list all file names if `fnameOrNULL` is NULL.
- returns the number of listed items (0 if fname not found)
+/**
+ list:
+
+ - file content if @p fnameOrNULL is not NULL;
+ - all file names if @p fnameOrNULL is NULL.
+ 
+ @returns the number of listed items
+ @retval 0 if @p fname not found
 */
 int listFile(const Interpreter interp, const char* fnameOrNULL);
 #endif //#inndef _DBOP_H

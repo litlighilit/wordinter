@@ -1,4 +1,11 @@
-
+/** @mainpage
+ *  @brief @c Word Interpreter
+ *  @brief a file-based search engine 
+ * 
+ *  
+ *  support both `CLI` and `REPL`
+ *  for details, see @ref main.h
+ */
 #ifndef _MAIN_H
 #define _MAIN_H
 
@@ -21,6 +28,7 @@
 #define codesKey "-c"
 #define cHelp "code to run, try -c 'help CODE' for specific CODE's help"
 
+/// add usage for @ref main CLI
 Usages genUsage(){ return USAGES(
              "[-l|-L] [-c,--code CODE] dir|[-f,--file FILE]...\t run code and exit"
             ,"[-l|-L] dir|[-f,--file FILE]...\t\t\t enter REPL"

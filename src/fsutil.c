@@ -24,9 +24,7 @@ CharSeq readAll(FILE* f){
 
 bool pushRec(RecSeq*p, const char* dir, const char* fname){
     bool res=true;
-    printf(fname);
     char* fpath = joinPath(dir, fname);
-    printf("\t%p\n", fname);
     FILE* f=fopen(fpath, "r");
     if(f==NULL){
         res = false;

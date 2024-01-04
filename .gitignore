@@ -1,5 +1,6 @@
 /build
-/src/.vscode
+/doc
+.vscode/
 /test/cache/
 /test/test_data
 __pycache__
