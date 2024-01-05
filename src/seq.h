@@ -52,7 +52,7 @@
 #define uncheckedGetItem(seq, idx) ((seq).data[idx])
 #define uncheckedSetItem(seq, idx, val) do{ (seq).data[idx]=val;}while(0)
 
-#define IndexError(seq, idx) (fprintf(stderr, "IndexError: index of `%d` out of range of seq `%s`(len=%d) ", idx, #seq, seq.len),exit(-1) )
+#define IndexError(seq, idx) (fprintf(stderr, "File \"%s\", line %d\n  IndexError: index of %d out of range of seq `%s`(len=%d) ", __FILE__, __LINE__, idx, #seq, seq.len),exit(-1) )
 #define checkedGetItem(seq, idx) ((idx)<(seq).len?(seq).data[idx]:IndexError(seq, idx),seq.data[idx])
 #define checkedSetItem(seq, idx, val) do{ if((idx)>=(seq).len)IndexError(seq, idx); seq.data[idx]=(val);}while(0)
 
