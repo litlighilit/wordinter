@@ -106,6 +106,11 @@ PairS splitQuo2(const CharSeq s, char sep){
 
     pos += skip(s, sep, pos);
 
+    if(pos>=s.len){
+        initSeq(char, res.right);
+        return res;
+    }
+    
     n = stripStr(&res.right, s, pos, true);
     if(n==-1) goto RetEmpty;
 
