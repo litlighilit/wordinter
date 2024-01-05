@@ -39,6 +39,14 @@ enum DirScanStat{
 */
 RecSeq listDir(const char* dir);
 
+/** append files in @p dir to @p p
+ @param[out] p pointer to append file record to
+ @param[in] dir [borrowed] directory to scan
+ @param[in] fallback can be `NULL`, if not `NULL`, will be passed the file's name that can't be open
+    @note "." and ".." is skipped alreadly
+    @returns whether to append
+*/
+enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename));
 
 /** push file content as record to a @ref RecSeq pointer
  @param[in,out] p a pointer

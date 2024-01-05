@@ -42,37 +42,42 @@ bool pushRec(RecSeq*p, const char* dir, const char* fname){
     return res;
 }
 
+void _NoopWithCharp(const char*_){}
+
 // skip . and ..
 bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
 #ifdef _MSC_VER
 #include <io.h>
 
-RecSeq listDir(const char* dir){
-    RecSeq res;
-    initSeq(Rec, res);
+enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename));
 
     const char* pattern = joinPath(dir, "*");
     struct _finddata_t fileInfo;
     intptr_t handle = _findfirst(pattern, &fileInfo);
 
-    if (handle == -1L) {
-        return res;
-    }
+    if (handle == -1L) return CantOpen;
+    
+    if(fallback==NULL) fallback=_NoopWithCharp;
 
+    enum DirScanStat res = Succ;
     int k;
     do {
         char*fname = fileInfo.name;
-        if(shallSkip(fname)){
-            goto Next;
+        if(shallSkip(fname)) goto Next;
+
+        bool succ = pushRec(p, dir, fname);
+
+        if(!succ){
+            res=ItemSkipped;
+            fallback(fname);
         }
-        pushRec(&res, dir, fname);
         
         Next:
         k = _findnext(handle, &fileInfo);
     } while (k==0);
      
     _findclose(handle);
-    free((char*)pattern);
+    free((char*)pattern); // discard const
     return res;
 }
 
@@ -80,14 +85,14 @@ RecSeq listDir(const char* dir){
 #else
 
 #include <dirent.h>
-RecSeq listDir(const char* dir){
-    RecSeq res;
-    initSeq(Rec, res);
+enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* filename)){
 
     DIR* dp=opendir(dir);
-    if(dp==NULL){
-        return res;
-    }
+    if(dp==NULL) return CantOpen;
+
+    if(fallback==NULL) fallback=_NoopWithCharp;
+
+    enum DirScanStat res = Succ;
     struct dirent* dire;
     while((dire=readdir(dp)) != NULL){
         //if(dire->d_type == DT_DIR) continue;
@@ -95,7 +100,12 @@ RecSeq listDir(const char* dir){
 
         if(shallSkip(fname)) continue;
 
-        pushRec(&res, dir, fname);
+        bool succ = pushRec(p, dir, fname);
+
+        if(!succ){
+            res=ItemSkipped;
+            fallback(fname);
+        }
 
     }
     closedir(dp);
@@ -106,6 +116,15 @@ RecSeq listDir(const char* dir){
 
 #endif
 
+
+RecSeq listDir(const char* dir){
+    RecSeq res;
+    initSeq(Rec, res);
+
+    pushInDir(&res, dir, NULL);
+
+    return res;
+}
 
 void freeListDir(RecSeq rs){
     forIndex(i, rs){
