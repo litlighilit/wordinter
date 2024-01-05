@@ -19,8 +19,13 @@
 #define singleLineParaFlag "-l"
 
 #define lHelp "single line mode, treat each line as a paragragh."
-#define detailsHelp "if '-l' is not set, it'll be multiline mode[default mode], only if there are more than 1 newline,\n\
-        \tthen they are treated as two paragraphs"
+const char* Notes[] = {
+"if '-l' is not set, it'll be multiline mode[default mode]: \n\
+        \tonly if there are more than 1 newline, then they are treated as two paragraphs", 
+"if neither DIR nor -f FILE argument is given,\
+   or given data can not be read, \n\
+    \tthen read one directory from stdin until got one valid",
+};
 
 #define filesKey "-f"
 #define fHelp "files to read from"
@@ -33,8 +38,8 @@
 #include "interpreter.h"
 /// add usage for @ref main CLI
 Usages genUsage(){ return USAGES(
-             "[-l|-L] [-c,--code CODE] dir|[-f,--file FILE]...\t run code and exit"
-            ,"[-l|-L] dir|[-f,--file FILE]...\t\t\t enter REPL"
+             "[-l|-L] [-c,--code CODE] [dir|[-f,--file FILE] ...]\t run code and exit"
+            ,"[-l|-L] [dir|[-f,--file FILE] ...]\t\t\t enter REPL"
         );
 }
 #endif

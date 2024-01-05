@@ -13,15 +13,15 @@ void warnCantOpenFile(const char*fname){
     warn("can't read '%s' ...", fname);
 }
 
-void reprPushInDir(RecSeq*p, const char* dir){
+enum DirScanStat reprPushInDir(RecSeq*p, const char* dir){
 
-    enum DirScanStat st = pushInDir(p, dir, warnCantOpenFile);
-    if(st==CantOpen){
+    enum DirScanStat res = pushInDir(p, dir, warnCantOpenFile);
+    if(res==CantOpen){
         warn("can't open directory `%s`", dir);
-        return;
-    }else if(st==ItemSkipped){
+    }else if(res==ItemSkipped){
         warn("some items in directory `%s` are skipped", dir);
     }
+    return res;
 }
 
 int main(int argc, char* argv[]){
@@ -39,12 +39,14 @@ int main(int argc, char* argv[]){
         .proj=Proj,
         .version=Version,
         .desc=Desc,
-        //.usages=... // will (and have to be) set within `main` function
+        .usages=genUsage()
     };
 
-    ArgParser parser = newArgParser(argc, argv, detailsHelp);
+    ArgParser parser = newArgParser(argc, argv, NULL);
+    
+    for(int i=0; i<sizeof(Notes)/sizeof(Notes[0]); i++)
+        addNote(parser, Notes[i]);
 
-    INFO.usages = genUsage(); 
     enInfo(parser, INFO);
 
     addBoolOpt(parser, singLineP, lHelp);
@@ -73,8 +75,8 @@ int main(int argc, char* argv[]){
     if(args.args.len!=0){
         CharSeq dirS=getItem(args.args, 0);
         char* dir = cstr(dirS);
-        reprPushInDir(&rs, dir);
-        hasInput=true;
+        enum DirScanStat ds = reprPushInDir(&rs, dir);
+        if(ds!=CantOpen) hasInput=true;
         free(dir);
     }
 
@@ -85,7 +87,7 @@ int main(int argc, char* argv[]){
         char*cfilepath=cstr(filepath);
 
         bool succ = pushRec(&rs, "", cfilepath);
-        if(!succ) 
+        if(!succ) warnCantOpenFile(cfilepath);
         free(cfilepath);
         // do not deinitSeq(char, filepath), as they're owned by args.
 
@@ -96,13 +98,15 @@ int main(int argc, char* argv[]){
     while(!hasInput){
         printf("please input a directory: ");
         CharSeq s = getLine();
-        if(s.len==0) continue;
+        if(s.len==0){
+            info("EOF getten\nbye.");
+            exit(0);
+        }
         char* dir = cstr(s);
         if(dir[s.len-1]=='\n') dir[s.len-1]='\0'; // rstrip one newline
 
-        reprPushInDir(&rs, dir);
-
-        hasInput = true;
+        enum DirScanStat ds = reprPushInDir(&rs, dir);
+        if(ds!= CantOpen) hasInput = true;
 
         deinitSeq(s);
         free(dir);

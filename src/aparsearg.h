@@ -113,11 +113,15 @@ typedef struct{
     const char* help; ///< not NULL
 } NamedHelp;
 
+typedef Seq(char*) CpSeq;
+
 typedef struct {
     char* const * argv;
     int argc;
     bool (*preArgHook)(const char* arg); ///< not NULL. returns whether to go on. i.e. if false then exit
-    CharSeq helps;
+    CpSeq notes;
+    const char* help; ///< can be `NULL`
+    CharSeq arghelps; // used for `addArgHelp`
     const char* map[MapLen]; // not begins with "--"
     // XXX: the following use the same map.
     const char* boolOptAdded[MapLen];
@@ -143,7 +147,9 @@ typedef ArgParserObj* ArgParser;
  @post free the returned parser via @ref freeArgParser
 */
 ArgParser newArgParser(int argc, char* const argv[],
-     const char* helpOrNul);
+    const char* help);
+
+void addNote(ArgParser parser, const char* help);
 
 void freeArgParser(ArgParser parser);
 

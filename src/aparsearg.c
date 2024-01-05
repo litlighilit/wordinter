@@ -17,17 +17,13 @@
 bool AlwaysGoOn(const char* _){return true;}
 
 ArgParser newArgParser(int argc, char* const argv[],
-     const char* helpOrNul
-){
+     const char* help ){
     ArgParser res = malloc(sizeof(ArgParserObj));
     res->preArgHook=AlwaysGoOn;
-    CharSeq helps;
-    if(helpOrNul!=NULL){
-        helps=charpToSeq("helps:\n"IND);
-        strAppendp(helps, helpOrNul);
-        addItem(helps, '\n');
-    } else initSeq(char, helps);
-    res->helps = helps;
+    res->help = help;
+
+    initSeq(char*, res->notes);
+    initSeq(char, res->arghelps);
 
     res->argc = argc;
     res->argv = argv;
@@ -44,9 +40,14 @@ ArgParser newArgParser(int argc, char* const argv[],
 
 }
 
+void addNote(ArgParser parser, const char* help){
+    CpSeq dest = parser->notes;
+    addItem(dest, (char*)help);
+    parser->notes = dest;
+}
 
 void freeArgParser(ArgParser parser){
-    deinitSeq(parser->helps);
+    deinitSeq(parser->notes);
     free(parser);
 }
 
@@ -105,24 +106,26 @@ void addListKey(ArgParser parser, char shortKey, const char*name, const char* he
     parser->listKeyAdded[_MapOrd(shortKey)] = (NamedHelp){name,help};
 }
 
-#define tab3 "\t\t\t"
+#define tab "\t"
+#define tab2 tab tab
+#define tab3 tab tab2
 void addArgHelp(ArgParser parser, const char* itemName, const char* help){
     assert(help!=NULL);
     
     static bool PreAdded = false; // ensure once
     static char* Pre = "args:\n";
     if(!PreAdded){
-        strAppendp(parser->helps, Pre);
+        strAppendp(parser->arghelps, Pre);
         PreAdded=true;
     }
      
         
-    strAppendp(parser->helps, IND); // indent
+    strAppendp(parser->arghelps, IND); // indent
     char* prehelp = catCStr(itemName, tab3);
     char* thehelp = catCStr(prehelp, help);
 
-    strAppendp(parser->helps, thehelp);
-    addItem(parser->helps, '\n');
+    strAppendp(parser->arghelps, thehelp);
+    addItem(parser->arghelps, '\n');
     free(prehelp);
     free(thehelp);
 
@@ -229,11 +232,23 @@ ParseArgRes parseArgs(ArgParser parser){
 
 }
 
+void printNotes(ArgParser parser, const char* pre){
 
-#define tab "\t"
-#define tab2 tab tab
+    CpSeq notes = parser->notes;    
+    if(notes.len==0) return;
+
+    puts("note:");
+
+    forIndex(i, notes){
+        char* p = uncheckedGetItem(notes, i);
+        printf("%s%s %s\n", IND, pre, p);
+    }
+}
+    
 void printAllArgsHelp(ArgParser parser){
-    printCharSeq(parser->helps);
+    if(parser->help!=NULL) puts(parser->help);
+
+    printCharSeq(parser->arghelps);
 
     const char* Pre="options:";
 
@@ -304,6 +319,8 @@ void printAllArgsHelp(ArgParser parser){
 
         free(pre);
     }
+    putchar('\n');
+    printNotes(parser, "*");
     
 }
 
@@ -353,7 +370,6 @@ void printProjUsageInfo(ProjInfo info){
             putchar('\n');
             free(s);
         }
-        putchar('\n');
     }
 }
 
@@ -368,6 +384,7 @@ bool parseInfo(const char* arg){
             printProjUsageInfo(GprojInfo);
             putchar('\n');
             printAllArgsHelp(Gparser);
+            putchar('\n');
             return false;
         }
     }
