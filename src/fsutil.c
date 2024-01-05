@@ -5,7 +5,9 @@
 #include <stdlib.h>
 
 #include "fsutil.h"
+#include "msg.h"
 
+#define in_MSVC (defined _MSC_VER)
 CharSeq readAll(FILE* f){
     CharSeq res;
     initSeq(char, res);
@@ -46,7 +48,7 @@ void _NoopWithCharp(const char*_){}
 
 // skip . and ..
 bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
-#ifdef _MSC_VER
+#if in_MSVC
 #include <io.h>
 
 enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename)){
@@ -68,6 +70,11 @@ enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* f
         bool succ = pushRec(p, dir, fname);
 
         if(!succ){
+            char*fpath=joinPath(dir, fname);
+            bool isDir = dirExists(fpath);
+            free(fpath);
+
+            if(isDir) goto Next;
             res=ItemSkipped;
             fallback(fname);
         }
@@ -102,10 +109,17 @@ enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* 
 
         bool succ = pushRec(p, dir, fname);
 
+        char*fpath=NULL;
         if(!succ){
+            char*fpath=joinPath(dir, fname);
+            bool isDir = dirExists(fpath);
+            free(fpath);
+
+            if(isDir) continue;
             res=ItemSkipped;
             fallback(fname);
         }
+        free(fpath);
 
     }
     closedir(dp);
@@ -116,6 +130,20 @@ enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* 
 
 #endif
 
+void warnCantOpenFile(const char*fname){
+    warn("can't read '%s' ...", fname);
+}
+
+enum DirScanStat reprPushInDir(RecSeq*p, const char* dir){
+
+    enum DirScanStat res = pushInDir(p, dir, warnCantOpenFile);
+    if(res==CantOpen){
+        warn("can't open directory `%s`", dir);
+    }else if(res==ItemSkipped){
+        warn("some items in directory `%s` are skipped", dir);
+    }
+    return res;
+}
 
 RecSeq listDir(const char* dir){
     RecSeq res;
@@ -134,3 +162,22 @@ void freeListDir(RecSeq rs){
     }
     deinitSeq(rs);
 }
+
+#if in_MSVC
+#include <fileapi.h>
+bool dirExists(const char* dir){
+	bool res = false;
+    DWORD a = GetFileAttributes(dir);
+    if(a != -1)
+      res = ((a & FILE_ATTRIBUTE_DIRECTORY) != 0);
+    return res;
+}
+#else
+#include <sys/stat.h>
+bool dirExists(const char* dir){
+    struct stat st;
+    bool res = stat(dir, &st) >= 0 & S_ISDIR(st.st_mode);
+	return res;
+}
+#endif // #ifdef _MSC_VER
+	

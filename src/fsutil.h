@@ -7,8 +7,9 @@
  @brief filesystem interface utility, support both `gcc` and `MSVC`
 */
 
-/*doctest:
+/*doctest: include("<assert.h>")
   char*cdir = ".";
+  assert(dirExists(cdir));
   RecSeq seq = listDir(cdir);
 
   printf("len: %d\n", seq.len);
@@ -43,10 +44,18 @@ RecSeq listDir(const char* dir);
  @param[out] p pointer to append file record to
  @param[in] dir [borrowed] directory to scan
  @param[in] fallback can be `NULL`, if not `NULL`, will be passed the file's name that can't be open
-    @note "." and ".." is skipped alreadly
+    @note any subdirectory will be skipped
     @returns whether to append
 */
 enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename));
+
+
+void warnCantOpenFile(const char*fname);
+
+/**will warn for "can't open file" and "...dir"
+ * @see @ref pushInDir
+*/
+enum DirScanStat reprPushInDir(RecSeq*p, const char* dir);
 
 /** push file content as record to a @ref RecSeq pointer
  @param[in,out] p a pointer
@@ -66,5 +75,12 @@ void freeListDir(RecSeq rs);
 CharSeq readAll(FILE* f);
 
 
+/**
+ @retval true if the directory `dir` exists.
+ @retval false if either @p dir not exists or `dir` is a file
+ Follows symlinks.
+ @see 
+*/
+bool dirExists(const char* dir);
 
 #endif //#ifndef _FSUTIL_H
