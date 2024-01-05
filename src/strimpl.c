@@ -10,9 +10,11 @@ bool seqEqStr(const CharSeq seq, const char*s){
     return memcmp(getData(seq), s, seq.len)==0;
 }
 
+#define _initStr(s) (s.itemSize = sizeof(char))
 CharSeq charpToSeq(const char* p){
     CharSeq res;
     //initSeq(char, res);
+    _initStr(res);
     res.len = strlen(p);
     res.cap = res.len+1;// avoid crash if addItem
     res.data = malloc(res.cap);
@@ -29,6 +31,7 @@ char* cstr(const CharSeq s){
 
 CharSeq copyCharSeq(const CharSeq s){
     CharSeq res;
+    _initStr(res);
     res.cap = s.cap;
     res.len = s.len;
     res.data = malloc(res.len);
