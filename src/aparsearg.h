@@ -142,13 +142,16 @@ typedef ArgParserObj* ArgParser;
 /**
  @param argc like `main` function's argc
  @param argv like `main` function's argv
- @param helpOrNul a help string. Passing a `NULL` means no help string,
+ @param[in] helpOrNul [borrowed] a help string. Passing a `NULL` means no help string,
  @returns a new @ref ArgParser
  @post free the returned parser via @ref freeArgParser
 */
 ArgParser newArgParser(int argc, char* const argv[],
-    const char* help);
+    const char* helpOrNul);
 
+/**
+ @param[in] help [borrowed] 
+*/
 void addNote(ArgParser parser, const char* help);
 
 void freeArgParser(ArgParser parser);

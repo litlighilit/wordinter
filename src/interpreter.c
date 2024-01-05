@@ -33,14 +33,14 @@ const char* CMD[N_CMD][N_ALIAS] = {
 
 #define SEP "\t:"
 const char* HELP[N_CMD] = {
-     QUE" WORD         "  SEP "query and print all positions of the word WORD"
-    ,CNT" FNAME N_PARA "  SEP "count the number of words in N_PARA paragraph of file FNAME"
-    ,FCY" WORD         "  SEP "print the frequency of the word WORD"
-    ,LST" [FNAME]      "  SEP "print content of FNAME or print all filenames"
-    ,MOD" [MODE]       "  SEP "switch between or switch mode to " ReprModes
-    ,HLP" [CMD]        "  SEP "print all help or for a certain CMD"
-    ,ALI" [CMD]        "  SEP "print all alias or for a certain CMD"
-    ,QUI"|exit         "  SEP "quit"
+     QUE" WORD         "   SEP "query and print all positions of the word WORD"
+    ,CNT" FNAME|ORD N_PARA"SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
+    ,FCY" WORD         "   SEP "print the frequency of the word WORD"
+    ,LST" [FNAME|ORD]  "   SEP "print content of FNAME or indexed in ORD or print all filenames"
+    ,MOD" [MODE]       "   SEP "switch between or switch mode to " ReprModes
+    ,HLP" [CMD]        "   SEP "print all help or for a certain CMD"
+    ,ALI" [CMD]        "   SEP "print all alias or for a certain CMD"
+    ,QUI"|exit         "   SEP "quit"
 };
 
 bool priHelp(int n){
@@ -126,6 +126,29 @@ void enterRepl(Interpreter* pinterp){
     }
 }
 
+/// 
+/// @param[out] ordp will be set -1 if filename is not found
+/// @param[in] rs
+/// @param[out] filenamep will be set `NULL` if @p arg is alreadly a order
+/// @returns whether @p arg is a file order alreadly
+bool _ordFileArg(int*ordp, const CharSeq arg, RecSeq rs, char** const filenamep){
+    int fileOrd=-1;
+    bool isOrd = parseInt(arg, &fileOrd);
+
+    char*fname=NULL;
+    if(!isOrd){
+        fname = cstr(arg);
+        #define checkFname(rec, _fname) (strcmp(rec.fname, _fname)==0)
+        int fileIdx = -1;
+        findIndex(fileIdx, rs, fname, checkFname);
+        if(fileIdx==-1) fileOrd=-1;
+        else fileOrd = fileIdx + 1;
+        #undef checkFname
+    }
+    *filenamep = fname;
+    *ordp = fileOrd;
+    return isOrd;
+}
 enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     enum Flag ret = FSucc;
     if(cmd.len==0) return FEmptyCmd;
@@ -133,6 +156,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     CharSeq key = pair.left;
     CharSeq args = pair.right;
     int ord = cmdOrd(key);
+
+    char* fnameArg=NULL;
+    int fileArgOrd;
+    bool isArgOrd;
     switch (ord)
     {
     case 0:
@@ -147,26 +174,30 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         free(c_word4qry);
         break;
     case 1:
-        ;PairS si = splitQuo2(pair.right, ' ');
+        ;PairS si = splitQuo2(args, ' ');
+
+        isArgOrd = _ordFileArg(&fileArgOrd, si.left, pinterp->db, &fnameArg);
+
+        if(fileArgOrd==-1) goto FileNotFound;
+
         int nPara;
-
-        char*fname = cstr(si.left);
-
         bool succ = parseInt(si.right, &nPara);
         if(!succ){
-            warn("bad int input! You shall input:");
-            priHelp(1);
-            free(fname);
+            warn("bad int input! You shall input:"); priHelp(1);
+            
             ret = FTypeErr;
             goto Clean;
         }
 
-        int cnt = countWordOf(*pinterp, fname, nPara);
-        if(cnt==FileNotFoundErr) warn("no file named '%s' found", fname);
-        else if(cnt==OverRangeErr) warn("The number %d is out of range", nPara);
+        int cnt = countWordOf(*pinterp, fileArgOrd, nPara);
+        if(cnt==FileNotFoundErr){
+            FileNotFound:
+            if(isArgOrd) warn("no file indexed in %d found", fileArgOrd);
+            else warn("no file named '%s' found", fnameArg);
+        }else if(cnt==IndexErr) warn("The number %d is out of range", nPara);
         else printCnt(cnt);
 
-        free(fname);
+        
 
         break;
     case 2:
@@ -182,16 +213,17 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
 
         break;
     case 3:
-        ;char*fnameOrNULL;
-        if(args.len==0) fnameOrNULL=NULL;
-        else fnameOrNULL=cstr(args);
+        if(args.len==0) fileArgOrd = 0;
+        else{
+            isArgOrd = _ordFileArg(&fileArgOrd, args, pinterp->db, &fnameArg);
+            if(fileArgOrd==-1) goto FileNotFound;
+        }
 
-        int nFiles = listFile(*pinterp, fnameOrNULL);
+        int nFiles = listFile(*pinterp, fileArgOrd);
 
-        if(nFiles==0) warn("no file named '%s' found", fnameOrNULL);
+        if(nFiles==0) goto FileNotFound;
         else info("%d files listed", nFiles);
 
-        free(fnameOrNULL);
         break;
     case 4:
         if(args.len==0){
@@ -237,6 +269,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     }
 
 Clean:
+    free(fnameArg);
     freePairS(pair);
     return ret;
 }

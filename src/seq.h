@@ -95,13 +95,19 @@
 
 
 /// @note @p cmp second arg is `key`
-#define searchBy(res, seq, destKey, cmp) do{\
-    forIndex(i, (seq)){\
-        if(cmp(uncheckedGetItem(seq, i), destKey)){\
-            res=uncheckedGetItem(seq, i);\
+#define findIndex(idx, seq, destKey, cmp) do{\
+    forIndex(__i, (seq)){\
+        if(cmp(uncheckedGetItem(seq, __i), destKey)){\
+            idx=__i;\
             break;\
         }\
     }\
+}while(0)
+
+#define searchBy(res, seq, destKey, cmp) do{\
+    int __idx;\
+    findIndex(__idx, seq, destKey, cmp);\
+    res = uncheckedGetItem(seq, __idx);\
 }while(0)
 
 #endif //#ifndef _SEQ_H

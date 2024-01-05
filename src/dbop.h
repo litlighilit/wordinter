@@ -47,17 +47,19 @@
 
 enum Err{
   FileNotFoundErr = -1,
-  OverRangeErr = -2
+  IndexErr = -2,
+  
 };
 
 /// query and print all @p word positions
 void queryAll(const Interpreter interp, const char* word);
 
-/** count word numbers in paragragh @p para of file @p fname
-* @retval -1 if no record with @p fname can be found
-* @retval -2 if @p para is over range
+/** count word numbers in paragragh @p para of file at @p fileOrd
+ @param fileOrd file order counting from 1 (Not 0)
+ @retval @ref FileNotFoundErr if no record with @p fileOrd can be found(i.e. out of range)
+ @retval @ref IndexErr if @p para is over range
 */ 
-int countWordOf(const Interpreter interp, const char* fname, int para);
+enum Err countWordOf(const Interpreter interp, int fileOrd, int para);
 
 /// count the frequency of @p word
 int countFrequency(const Interpreter interp, const char* word);
@@ -65,11 +67,12 @@ int countFrequency(const Interpreter interp, const char* word);
 /**
  list:
 
- - file content if @p fnameOrNULL is not NULL;
- - all file names if @p fnameOrNULL is NULL.
- 
+ - file content if @p fileOrd is a Positive;
+ - all file names if @p fileOrd is 0.
+
+ @param fileOrd file order counting from 1 (0 means listing all files)
  @returns the number of listed items
- @retval 0 if @p fname not found
+ @retval 0 if @p fileOrd out of range
 */
-int listFile(const Interpreter interp, const char* fnameOrNULL);
+int listFile(const Interpreter interp, int fileOrd);
 #endif //#inndef _DBOP_H

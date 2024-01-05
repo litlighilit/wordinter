@@ -2,8 +2,8 @@
 #include <string.h>
 #include "dbop.h"
 
-#ifndef IDX // start with 0 or 1
-#define IDX 1
+#ifndef PARAM_START // start with 0 or 1
+#define PARAM_START 1
 #endif
 
 
@@ -20,7 +20,7 @@
             int __n=skipPunc(para,0);\
             wstream.idx = __n;\
             \
-            for(int iWord=IDX; ; iWord++){\
+            for(int iWord=PARAM_START; ; iWord++){\
                 CharSeq Word = next_word(wstream);\
                 if(Word.len==0)break;\
                 doWith_Word;\
@@ -38,7 +38,7 @@
         \
         StrStream pstream = toParaStream(s);\
         \
-        for(int iPara=IDX; ; iPara++){\
+        for(int iPara=PARAM_START; ; iPara++){\
             CharSeq para = next_para(pstream, interp.multiLinePara);\
             if(para.len==0)break;\
             pos.para=iPara;\
@@ -60,18 +60,19 @@ void queryAll(const Interpreter interp, const char* word){
 
 #define checkFname(rec, fname) ( strcmp((rec).fname, fname) == 0 )
 
-int countWordOf(const Interpreter interp, const char* fname, int para){
-    Rec rec;
-    searchBy(rec, interp.db, fname, checkFname);
+enum Err countWordOf(const Interpreter interp, int fileOrd, int para){
     
-    if(strcmp(fname, rec.fname)!=0) return FileNotFoundErr;
+    RecSeq rs = interp.db;
+    if(fileOrd<1 || fileOrd>rs.len) return FileNotFoundErr;
+    int fileIdx = fileOrd-1;
+    Rec rec = uncheckedGetItem(rs, fileIdx);
     CharSeq fileCont = getData(rec);
 
     StrStream pstream = toParaStream(fileCont);
 
     CharSeq Para;
 
-    int i=IDX;
+    int i=PARAM_START;
     
     while(1){
         CharSeq seq = next_para(pstream, interp.multiLinePara);
@@ -91,7 +92,7 @@ CountWord:
     return cnt;
 
 RangeErr:
-    return OverRangeErr;
+    return IndexErr;
 }
 
 int countFrequency(const Interpreter interp, const char* word){
@@ -101,23 +102,22 @@ int countFrequency(const Interpreter interp, const char* word){
 }
 
 
-int listFile(const Interpreter interp, const char* fnameOrNULL){
+int listFile(const Interpreter interp, int fileOrd){
     int res=0;
     RecSeq rs = interp.db;
-    if(fnameOrNULL==NULL){
+    if(fileOrd==0){
         forIndex(idx, rs){
             Rec rec = getItem(rs, idx);
+            int ord = idx+1;
+            printf("%d. ", ord);
             puts(rec.fname);
             res++;
         }
     }else{
-        const char*fname = fnameOrNULL;
-        Rec rec={0};
-        #define cmp(rec, fname) (strcmp(rec.fname, fname)==0)
-        searchBy(rec, rs, fname, cmp);
-        #undef cmp
+        if(fileOrd<1||fileOrd>rs.len) return 0;
+        int fileIdx = fileOrd-1;
+        Rec rec=uncheckedGetItem(rs, fileIdx);
 
-        if(rec.fname==NULL) return 0;
 
         printf("%s\n", rec.fname);
         for(int _=0; _<strlen(rec.fname); _++) putchar('=');
