@@ -49,7 +49,7 @@ bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(fi
 #ifdef _MSC_VER
 #include <io.h>
 
-enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename));
+enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename)){
 
     const char* pattern = joinPath(dir, "*");
     struct _finddata_t fileInfo;

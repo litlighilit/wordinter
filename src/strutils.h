@@ -92,7 +92,7 @@ CharSeq strSlice(const CharSeq s, int a);
 
 /// parse @p s as an intergar
 /// @param s 
-/// @param[in] res a pointer to store result interger
+/// @param[in] res a pointer to store result interger, untouched if not successful
 /// @returns whether is successful
 bool parseInt(const CharSeq s, int*res);
 
