@@ -58,6 +58,65 @@ PairS split2(const CharSeq s, char sep){
     return res;
 }
 
+static char QuoM = '"'; // Quotation mark
+
+/** strip a may-be quoted string.
+ e.g. `"s"` -> `s`    asd -> asd    `  e` -> `  e`
+ \param[out] p a \b not initialized pointer
+ \returns number of parsed char
+ \retval -1 if quotation mark is not matched (no ending mark is found)
+ \retval 0 if @p s is empty
+*/
+int stripStr(CharSeq*p, const CharSeq s, int start, bool rightUntilEnd){
+    if(s.len==0)
+        return 0;
+
+    int n=0;    
+    CharSeq res;
+    if(getItem(s,start)==QuoM){
+        n++;
+
+        res = parseUntil(s, QuoM, start+n);
+        n += res.len;
+
+        if(uncheckedGetItem(s, start+n)!=QuoM) return -1;
+
+        n++;
+    }else{
+        if(rightUntilEnd) res = strSlice(s, start);
+        else res = parseUntil(s, ' ', start);
+        n += res.len;
+    }
+    *p = res;
+
+    return n;
+}
+
+PairS splitQuo2(const CharSeq s, char sep){
+    PairS res;
+
+    if(s.len==0) goto RetEmpty;
+
+    // then len>=1
+    int pos = 0; // parse position
+    int n = stripStr(&res.left, s, pos, false);
+    if(n==-1) goto RetEmpty;
+    
+    pos += n;
+
+    pos += skip(s, sep, pos);
+
+    n = stripStr(&res.right, s, pos, true);
+    if(n==-1) goto RetEmpty;
+
+    return res;
+
+    RetEmpty:
+        initSeq(char, res.left);
+        initSeq(char, res.right);
+        return res;
+    
+}
 
 
 bool parseInt(const CharSeq s, int* res){

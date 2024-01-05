@@ -129,7 +129,7 @@ void enterRepl(Interpreter* pinterp){
 enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     enum Flag ret = FSucc;
     if(cmd.len==0) return FEmptyCmd;
-    PairS pair = split2(cmd, ' ');
+    PairS pair = splitQuo2(cmd, ' ');
     CharSeq key = pair.left;
     CharSeq args = pair.right;
     int ord = cmdOrd(key);
@@ -147,7 +147,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         free(c_word4qry);
         break;
     case 1:
-        ;PairS si = split2(pair.right, ' ');
+        ;PairS si = splitQuo2(pair.right, ' ');
         int nPara;
 
         char*fname = cstr(si.left);
