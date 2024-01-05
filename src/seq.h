@@ -2,6 +2,7 @@
 #ifndef _SEQ_H
 #define _SEQ_H
 
+//[header-only]
 /**
  @file seq.h
  @brief macros for a generics sequence

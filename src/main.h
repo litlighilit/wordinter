@@ -28,6 +28,9 @@
 #define codesKey "-c"
 #define cHelp "code to run, try -c 'help CODE' for specific CODE's help"
 
+#include "aparsearg.h"
+#include "fsutil.h"
+#include "interpreter.h"
 /// add usage for @ref main CLI
 Usages genUsage(){ return USAGES(
              "[-l|-L] [-c,--code CODE] dir|[-f,--file FILE]...\t run code and exit"

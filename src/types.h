@@ -2,6 +2,7 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
+//[header-only]
 /*doctest:
   Pos pos = {"fname", 3, 2};
   printPos(pos);

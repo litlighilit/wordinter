@@ -4,9 +4,6 @@
 #include <stdio.h>
 #include "types.h" // RecSeq
 #include "seq.h"
-#include "fsutil.h" // listDir
-#include "interpreter.h" // enterRepl
-#include "aparsearg.h"
 #include "msg.h" // err
 
 #include "main.h" // HelpMsg, Version

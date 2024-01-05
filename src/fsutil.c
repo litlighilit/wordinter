@@ -5,7 +5,6 @@
 #include <stdlib.h>
 
 #include "fsutil.h"
-#include "cstrutils.h"
 
 CharSeq readAll(FILE* f){
     CharSeq res;

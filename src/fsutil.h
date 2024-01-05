@@ -23,6 +23,13 @@
 #include <stdio.h>
 #include "types.h"
 
+#include "cstrutils.h"
+
+enum DirScanStat{
+    CantOpen=-1, ///< can't open directory
+    Succ,
+    ItemSkipped ///< can't open some items
+};
 
 /** list data in files of @p dir
  @param[in] dir [copied] directory to list

@@ -1,6 +1,7 @@
 
 #ifndef _MSG_H
 #define _MSG_H
+//[header-only]
 
 #define ERR_RET -1
 
