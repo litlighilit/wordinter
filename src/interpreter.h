@@ -20,7 +20,7 @@
   puts("entering repl...");
 
   Interpreter interp = initInterpreter(seq, true);
-  enterRepl(interp);
+  enterRepl(&interp);
 
 
 */

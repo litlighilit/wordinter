@@ -162,7 +162,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         }
 
         int cnt = countWordOf(*pinterp, fname, nPara);
-        if(cnt==FileNotFoundErr) warn("not file '%s' found", fname);
+        if(cnt==FileNotFoundErr) warn("no file named '%s' found", fname);
         else if(cnt==OverRangeErr) warn("The number %d is out of range", nPara);
         else printCnt(cnt);
 
