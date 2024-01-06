@@ -8,22 +8,6 @@
 
 #include "main.h" // HelpMsg, Version
 
-
-void warnCantOpenFile(const char*fname){
-    warn("can't read '%s' ...", fname);
-}
-
-enum DirScanStat reprPushInDir(RecSeq*p, const char* dir){
-
-    enum DirScanStat res = pushInDir(p, dir, warnCantOpenFile);
-    if(res==CantOpen){
-        warn("can't open directory `%s`", dir);
-    }else if(res==ItemSkipped){
-        warn("some items in directory `%s` are skipped", dir);
-    }
-    return res;
-}
-
 int main(int argc, char* argv[]){
     
     #define K(arr) arr[1] // get "-x"'s 'x'
@@ -76,7 +60,7 @@ int main(int argc, char* argv[]){
         CharSeq dirS=getItem(args.args, 0);
         char* dir = cstr(dirS);
         enum DirScanStat ds = reprPushInDir(&rs, dir);
-        if(ds!=CantOpen) hasInput=true;
+        if(ds!=dsCantOpen) hasInput=true;
         free(dir);
     }
 
@@ -86,7 +70,7 @@ int main(int argc, char* argv[]){
         CharSeq filepath=getItem(files, i);
         char*cfilepath=cstr(filepath);
 
-        bool succ = pushRec(&rs, "", cfilepath);
+        bool succ = pushFile(&rs, cfilepath);
         if(!succ) warnCantOpenFile(cfilepath);
         free(cfilepath);
         // do not deinitSeq(char, filepath), as they're owned by args.

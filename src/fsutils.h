@@ -1,10 +1,10 @@
 
-#ifndef _FSUTIL_H
-#define _FSUTIL_H
+#ifndef _FSUTILS_H
+#define _FSUTILS_H
 
 /**
- @file fsutil.h
- @brief filesystem interface utility, support both `gcc` and `MSVC`
+ @file fsutils.h
+ @brief filesystem interface utilities, support both POSIX c compiler like `gcc` and `MSVC`
 */
 
 /*doctest: include("<assert.h>")
@@ -27,16 +27,16 @@
 #include "cstrutils.h"
 
 enum DirScanStat{
-    CantOpen=-1, ///< can't open directory
-    Succ,
-    ItemSkipped ///< can't open some items
+    dsCantOpen=-1, ///< can't open directory
+    dsSucc,
+    dsItemSkipped, ///< can't open some items
 };
 
 /** list data in files of @p dir
  @param[in] dir [copied] directory to list
  @returns @ref RecSeq i.e. @ref Seq of @ref Rec
  @retval an empty seq if no data read
- @post free @ref RecSeq result via @ref freeListDir
+ @post free @ref RecSeq result via freeListDir()
 */
 RecSeq listDir(const char* dir);
 
@@ -50,22 +50,14 @@ RecSeq listDir(const char* dir);
 enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename));
 
 
-void warnCantOpenFile(const char*fname);
-
-/**will warn for "can't open file" and "...dir"
- * @see @ref pushInDir
-*/
-enum DirScanStat reprPushInDir(RecSeq*p, const char* dir);
-
 /** push file content as record to a @ref RecSeq pointer
  @param[in,out] p a pointer
- @param[in] dir [copied] can be an empty string i.e. `""`
- @param[in] fname [copied] file name (also will be stored in @ref Rec)
+ @param[in] fpath [copied] file path
  @returns whether read file content successfully
 */
-bool pushRec(RecSeq*p, const char* dir, const char* fname);
+bool pushFile(RecSeq*p, const char* fpath);
 
-/// @pre @ref listDir
+/// @pre listDir() or pushFile() or pushInDir()
 /// @note latter @p rs is in broken status and shall not be passed to addItem...etc.
 void freeListDir(RecSeq rs);
 
@@ -79,8 +71,10 @@ CharSeq readAll(FILE* f);
  @retval true if the directory `dir` exists.
  @retval false if either @p dir not exists or `dir` is a file
  Follows symlinks.
- @see 
+
+ > translated from [nim-lang](
+  https://github.com/nim-lang/Nim/tree/version-2-0/lib/std/private/oscommon.nim#L139)
 */
 bool dirExists(const char* dir);
 
-#endif //#ifndef _FSUTIL_H
+#endif //#ifndef _FSUTILS_H

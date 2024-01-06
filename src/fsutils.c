@@ -4,8 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "fsutil.h"
-#include "msg.h"
+#include "fsutils.h"
 
 #define in_MSVC (defined _MSC_VER)
 CharSeq readAll(FILE* f){
@@ -23,26 +22,21 @@ CharSeq readAll(FILE* f){
 
 
 
-bool pushRec(RecSeq*p, const char* dir, const char* fname){
+bool pushFile(RecSeq*p, const char* fpath){
     bool res=true;
-    char* fpath = joinPath(dir, fname);
     FILE* f=fopen(fpath, "r");
-    if(f==NULL){
-        res = false;
-        goto End;
-    }
+    if(f==NULL) return false;
     CharSeq content = readAll(f);
     fclose(f);
     
     Rec rec;
-    rec.fname = newCStr(fname);
+    rec.fname = newCStr(fpath);
     rec.data = content;
     
     pAddItem(p, rec);
-    End:
-    free(fpath);
     return res;
 }
+
 
 void _NoopWithCharp(const char*_){}
 
@@ -57,29 +51,29 @@ enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* f
     struct _finddata_t fileInfo;
     intptr_t handle = _findfirst(pattern, &fileInfo);
 
-    if (handle == -1L) return CantOpen;
+    if (handle == -1L) return dsCantOpen;
     
     if(fallback==NULL) fallback=_NoopWithCharp;
 
-    enum DirScanStat res = Succ;
+    enum DirScanStat res = dsSucc;
     int k;
     do {
         char*fname = fileInfo.name;
         if(shallSkip(fname)) goto Next;
 
-        bool succ = pushRec(p, dir, fname);
+        char* path = joinPath(dir, fname);
+        bool succ = pushFile(p, path);
 
         if(!succ){
-            char*fpath=joinPath(dir, fname);
-            bool isDir = dirExists(fpath);
-            free(fpath);
+            bool isDir = dirExists(path);
 
             if(isDir) goto Next;
-            res=ItemSkipped;
+            res=dsItemSkipped;
             fallback(fname);
         }
         
         Next:
+        free(path);
         k = _findnext(handle, &fileInfo);
     } while (k==0);
      
@@ -95,11 +89,11 @@ enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* f
 enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* filename)){
 
     DIR* dp=opendir(dir);
-    if(dp==NULL) return CantOpen;
+    if(dp==NULL) return dsCantOpen;
 
     if(fallback==NULL) fallback=_NoopWithCharp;
 
-    enum DirScanStat res = Succ;
+    enum DirScanStat res = dsSucc;
     struct dirent* dire;
     while((dire=readdir(dp)) != NULL){
         //if(dire->d_type == DT_DIR) continue;
@@ -107,20 +101,19 @@ enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* 
 
         if(shallSkip(fname)) continue;
 
-        bool succ = pushRec(p, dir, fname);
+        char* path = joinPath(dir, fname);
+        bool succ = pushFile(p, path);
 
-        char*fpath=NULL;
         if(!succ){
-            char*fpath=joinPath(dir, fname);
-            bool isDir = dirExists(fpath);
-            free(fpath);
+            bool isDir = dirExists(path);
 
-            if(isDir) continue;
-            res=ItemSkipped;
+            if(isDir) goto Next;
+            res=dsItemSkipped;
             fallback(fname);
         }
-        free(fpath);
 
+        Next:
+        free(path);
     }
     closedir(dp);
     
@@ -130,20 +123,7 @@ enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* 
 
 #endif
 
-void warnCantOpenFile(const char*fname){
-    warn("can't read '%s' ...", fname);
-}
 
-enum DirScanStat reprPushInDir(RecSeq*p, const char* dir){
-
-    enum DirScanStat res = pushInDir(p, dir, warnCantOpenFile);
-    if(res==CantOpen){
-        warn("can't open directory `%s`", dir);
-    }else if(res==ItemSkipped){
-        warn("some items in directory `%s` are skipped", dir);
-    }
-    return res;
-}
 
 RecSeq listDir(const char* dir){
     RecSeq res;

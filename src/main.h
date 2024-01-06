@@ -34,7 +34,7 @@ const char* Notes[] = {
 #define cHelp "code to run, try -c 'help CODE' for specific CODE's help"
 
 #include "aparsearg.h"
-#include "fsutil.h"
+#include "fsinter.h"
 #include "interpreter.h"
 /// add usage for @ref main CLI
 Usages genUsage(){ return USAGES(
