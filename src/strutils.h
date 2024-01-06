@@ -32,12 +32,12 @@
     freePairS(p);
   }
 
-// # strSlice
-  CharSeq ss = strSlice(s, s.len-4);
+// # subStrFrom
+  CharSeq ss = subStrFrom(s, s.len-4);
   printlnCharSeq(ss); //-> is 3
 
 // # parseInt
-  CharSeq s3 = strSlice(s, s.len-2);
+  CharSeq s3 = subStrFrom(s, s.len-2);
   int n;
   bool succ = parseInt(s3, &n);
   assert(succ);
@@ -86,9 +86,12 @@ PairS splitQuo2(const CharSeq s, char sep);
 /// @returns a new string
 CharSeq strAdd(const CharSeq s1, const CharSeq s2);
 
-/// string slice starting at @p a
+/**sub-string at [first,last]*/
+CharSeq subStr(const CharSeq s, int first, int last);
+
+/// string slice starting at @p start
 /// @returns a new CharSeq
-CharSeq strSlice(const CharSeq s, int a);
+CharSeq subStrFrom(const CharSeq s, int start);
 
 /// parse @p s as an intergar
 /// @param s 

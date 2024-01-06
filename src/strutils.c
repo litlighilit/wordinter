@@ -32,16 +32,20 @@ CharSeq strAdd(const CharSeq s1, const CharSeq s2){
     return res;
 }
 
-CharSeq strSlice(const CharSeq s, int a){
+CharSeq subStr(const CharSeq s, int first, int last){
+    if(last>s.len-1) last = s.len-1;
     CharSeq res;
     initSeq(char, res);
 
-    for(int i=a; i<s.len; i++){
-        addItem(res, getItem(s,i));
+    for(int i=first; i<=last; i++){
+        addItem(res, uncheckedGetItem(s,i));
     }
 
     return res;
 
+}
+CharSeq subStrFrom(const CharSeq s, int start){
+    return subStr(s, start, s.len-1);
 }
 
 PairS split2(const CharSeq s, char sep){
@@ -53,7 +57,7 @@ PairS split2(const CharSeq s, char sep){
 
     int n = skip(s, sep, lft.len);
 
-    res.right = strSlice(s, lft.len+n);
+    res.right = subStrFrom(s, lft.len+n);
 
     return res;
 }
@@ -83,7 +87,7 @@ int stripStr(CharSeq*p, const CharSeq s, int start, bool rightUntilEnd){
 
         n++;
     }else{
-        if(rightUntilEnd) res = strSlice(s, start);
+        if(rightUntilEnd) res = subStrFrom(s, start);
         else res = parseUntil(s, ' ', start);
         n += res.len;
     }
@@ -110,7 +114,7 @@ PairS splitQuo2(const CharSeq s, char sep){
         initSeq(char, res.right);
         return res;
     }
-    
+
     n = stripStr(&res.right, s, pos, true);
     if(n==-1) goto RetEmpty;
 
