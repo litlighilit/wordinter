@@ -5,11 +5,17 @@
 ### runtime
 - allow any numbers of files in input directory
 - allow any amount of file contents
+- bound checks are round:
+	- paragraph index
+	- word index
 - allow run via either stdin-based REPL or CLI
+- when CLI:
+	- can type filenames that contains spaces (given surrounded by quotation marks)
 
 ### compile
-- allow both linux and windows
+- target both linux and windows
 - build via `make`
+- build document via `doxygen`
 - using git as VCS
 - self-write a framework for `doctest`
 - all headers are correctly wrapped by condtion preprocess directives to avoid multi-included
