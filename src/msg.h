@@ -34,6 +34,6 @@
 #define msg msgNoNL
 
 #define warn(msg, ...) psMsgWith("[WARN] ", msg, ## __VA_ARGS__)
-#define info(msg, ...) psMsgWith("[INFO] ", msg ,##__VA_ARGS__);
+#define info(msg, ...) psMsgWith("[INFO] ", msg ,##__VA_ARGS__)
   
 #endif //#ifndef _MSG_H
