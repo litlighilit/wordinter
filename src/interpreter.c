@@ -1,22 +1,25 @@
 
+#include "msg.h"
 #include "interpreter.h"
 
 #define QUE "query"
 #define CNT "count"
 #define FCY "frequency"
 #define LST "list"
+#define SRC "source"
 #define MOD "mode"
 #define HLP "help"
 #define ALI "alias"
 #define QUI "quit"
 
-#define N_CMD 8
+#define N_CMD 9
 #define N_ALIAS 3
 const char* CMD[N_CMD][N_ALIAS] = {
      QUE, "que", "qu"
     ,CNT, "cnt", "c"
     ,FCY, "fcy", "f"
     ,LST, "lst", "l"
+    ,SRC, "src", "s"
     ,MOD, "mod", "m"
     ,HLP, "hel", "h"
     ,ALI, "ali", "a"
@@ -33,14 +36,15 @@ const char* CMD[N_CMD][N_ALIAS] = {
 
 #define SEP "\t:"
 const char* HELP[N_CMD] = {
-     QUE" WORD         "   SEP "query and print all positions of the word WORD"
-    ,CNT" FNAME|ORD N_PARA"SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
-    ,FCY" WORD         "   SEP "print the frequency of the word WORD"
-    ,LST" [FNAME|ORD]  "   SEP "print content of FNAME or indexed in ORD or print all filenames"
-    ,MOD" [MODE]       "   SEP "switch between or switch mode to " ReprModes
-    ,HLP" [CMD]        "   SEP "print all help or for a certain CMD"
-    ,ALI" [CMD]        "   SEP "print all alias or for a certain CMD"
-    ,QUI"|exit         "   SEP "quit"
+     QUE" WORD                 "SEP "query and print all positions of the word WORD"
+    ,CNT" FNAME|ORD N_PARA  "   SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
+    ,FCY" WORD                 "SEP "print the frequency of the word WORD"
+    ,LST" [FNAME|ORD]          "SEP "print content of FNAME or indexed in ORD or print all filenames"
+    ,SRC" DIR|FPATH            "SEP "load all files in DIR or only file"
+    ,MOD" [MODE]               "SEP "switch between or switch mode to " ReprModes
+    ,HLP" [CMD]                "SEP "print all help or for a certain CMD"
+    ,ALI" [CMD]                "SEP "print all alias or for a certain CMD"
+    ,QUI"|exit                 "SEP "quit"
 };
 
 bool priHelp(int n){
@@ -160,15 +164,19 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     char* fnameArg=NULL;
     int fileArgOrd;
     bool isArgOrd;
+    #define check_arg(nCmd) do{\
+        if(args.len==0){\
+            warn("missing arg! Here is help:");\
+            priHelp(nCmd);\
+            ret=FMissArg;\
+            goto Clean;\
+        }\
+    }while(0)
+
     switch (ord)
     {
     case 0:
-        if(args.len==0){
-            warn("missing arg! Here is help:");
-            priHelp(0);
-            ret=FMissArg;
-            goto Clean;
-        }
+        check_arg(0);
         char* c_word4qry = cstr(args);
         queryAll(*pinterp, c_word4qry);
         free(c_word4qry);
@@ -201,11 +209,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
 
         break;
     case 2:
-        if(args.len==0){
-            priHelp(2);
-            ret=false;
-            goto Clean;
-        }
+        check_arg(2);
         char* c_word4fcy = cstr(args);
         int fcy = countFrequency(*pinterp, c_word4fcy);
         printFcy(fcy);
@@ -226,6 +230,16 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
 
         break;
     case 4:
+        check_arg(4);
+
+        { // block
+        char* path = cstr(args);
+        reprPushPath(&pinterp->db, path);
+        free(path);
+        }
+
+        break;
+    case 5:
         if(args.len==0){
             pinterp->multiLinePara = !pinterp->multiLinePara;
             goto PriLineMode;
@@ -240,7 +254,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
       PriLineMode:
         info("switch to mode '%s'", getModeS(pinterp));
         break;
-    case 5:
+    case 6:
     #define PRI(dest) do{\
         if(args.len==0){\
             msgl("all %s:", #dest);\
@@ -254,10 +268,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
 
         PRI(Help)
         break;
-    case 6:
+    case 7:
         PRI(Alias)
         break;
-    case 7:
+    case 8:
         return FQuit;
         break;
 

@@ -32,7 +32,7 @@
 #include "strutils.h"
 #include "interptype.h"
 #include "dbop.h"
-#include "msg.h"
+#include "fsinter.h"
 
 /// flag used to show @ref evalCmd status
 enum Flag{
