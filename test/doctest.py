@@ -1,7 +1,7 @@
 'doctest for c code'
 from __future__ import annotations
 
-ENC = 'utf=8'
+ENC = 'utf-8'
 import os,sys
 
 from pathutils import *
@@ -70,7 +70,9 @@ def _doctest(fp: Path) -> int:
             if ul.startswith(TestSep.op):
                 parse_cmd(ul[len(TestSep.op):], deps, more_blt_headers)
                 test_body = parse_content(f)
-                cuHs = parse_cusm_headers(f)
+                cuHs = set()
+                parse_cusm_headers_r(cuHs, f, fp.parent)
+                print(cuHs)
                 for i in cuHs:
                     cf = fp.parent/with_ext(i, '.c')
                     if not cf.exists(): continue  # for header only files
@@ -129,6 +131,20 @@ def parse_cusm_headers(f) -> list[str]:
         op,ed = code.includes
         if l.startswith(op):
             res.append(capture_between(l, op, ed))
+    return res
+def parse_cusm_headers_r(res: set[str], f, dir: Path):
+
+    oset = res.copy()
+
+    ls = parse_cusm_headers(f)
+    res.update(ls)
+
+    if res==oset:  return
+
+    for i in ls:
+        with open(dir/i, encoding=ENC) as nf:
+            parse_cusm_headers_r(res, nf, dir)
+    
     return res
 
 
