@@ -272,7 +272,9 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         PRI(Alias)
         break;
     case 8:
-        return FQuit;
+        ret = FQuit;
+        goto Clean;
+        
         break;
 
     default:
