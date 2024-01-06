@@ -80,20 +80,20 @@ int main(int argc, char* argv[]){
     if(!hasInput) warn("neither a directory nor some files is passed."\
          "  please pass some input data (pass `-h` for details)");
     while(!hasInput){
-        printf("please input a directory: ");
+        msg("please input a directory or file path: ");
         CharSeq s = getLine();
         if(s.len==0){
             info("EOF getten\nbye.");
             exit(0);
         }
-        char* dir = cstr(s);
-        if(dir[s.len-1]=='\n') dir[s.len-1]='\0'; // rstrip one newline
+        char* path = cstr(s);
+        if(path[s.len-1]=='\n') path[s.len-1]='\0'; // rstrip one newline
 
-        enum DirScanStat ds = reprPushInDir(&rs, dir);
-        if(ds!= CantOpen) hasInput = true;
+        bool succ = reprPushPath(&rs, path);
+        if(succ) hasInput = true;
 
         deinitSeq(s);
-        free(dir);
+        free(path);
     }
 
 
