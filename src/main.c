@@ -83,7 +83,8 @@ int main(int argc, char* argv[]){
         msg("please input a directory or file path: ");
         CharSeq s = getLine();
         if(s.len==0){
-            info("EOF getten\nbye.");
+            info("EOF got");
+            sayBye();
             exit(0);
         }
         char* path = cstr(s);

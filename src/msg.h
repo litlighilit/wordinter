@@ -35,5 +35,7 @@
 
 #define warn(msg, ...) psMsgWith("[WARN] ", msg, ## __VA_ARGS__)
 #define info(msg, ...) psMsgWith("[INFO] ", msg ,##__VA_ARGS__)
-  
+
+// used by both interpreter and main
+#define sayBye() msgl("bye.");
 #endif //#ifndef _MSG_H

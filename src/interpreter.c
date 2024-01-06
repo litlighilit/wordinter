@@ -122,7 +122,7 @@ void enterRepl(Interpreter* pinterp){
         line.len = len-1;
         enum Flag f = evalCmd(pinterp, line);
         if(f==FQuit){
-            msgl("bye.");
+            sayBye();
             break;
         }
         line.len = len;
@@ -274,7 +274,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     case 8:
         ret = FQuit;
         goto Clean;
-        
+
         break;
 
     default:
