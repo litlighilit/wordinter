@@ -52,7 +52,8 @@ bool isWordBorder(char c){
   #ifndef DASH_IN_WORD
      c!='-'&&
   #endif
-     31<c&&c<'A' ||
+     31<c&&c<'0' ||
+    '9'<c&&c<'A' ||
     'Z'<c&&c<'a' ||
     'z'<c);
 }
