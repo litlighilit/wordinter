@@ -88,7 +88,7 @@ bool priHelpOf(const CharSeq dest){
     }else{
         help="unknow cmd";
     }
-    msgl(HELP[ord]);
+    msgl(help);
     return found;
 }
 
