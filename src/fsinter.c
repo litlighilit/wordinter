@@ -1,6 +1,5 @@
 
 #include "fsinter.h"
-#include "msg.h"
 
 void warnCantOpenFile(const char*fname){
     warn("can't read '%s' ...", fname);

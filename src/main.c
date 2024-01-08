@@ -4,11 +4,13 @@
 #include <stdio.h>
 #include "types.h" // RecSeq
 #include "seq.h"
-#include "msg.h" // err
+#include "cmsg.h" // err
 
 #include "main.h" // HelpMsg, Version
 
 int main(int argc, char* argv[]){
+
+    cmsgWarnOnFailCfg(true);
     
     #define K(arr) arr[1] // get "-x"'s 'x'
     const char singLineP = K(singleLineParaFlag);

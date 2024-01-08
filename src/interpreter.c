@@ -1,5 +1,4 @@
 
-#include "msg.h"
 #include "interpreter.h"
 
 #define QUE "query"

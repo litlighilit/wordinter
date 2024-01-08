@@ -19,6 +19,8 @@
 
   puts("entering repl...");
 
+  cmsgWarnOnFailCfg(true);
+
   Interpreter interp = initInterpreter(seq, true);
   enterRepl(&interp);
 
@@ -31,6 +33,7 @@
 #include "types.h"
 #include "strutils.h"
 #include "interptype.h"
+#include "cmsg.h"
 #include "dbop.h"
 #include "fsinter.h"
 

@@ -7,7 +7,10 @@
  @brief file system interface
  
  plus message to alert compared with @ref fsutils.h
+
+ @note do not forget firstly @ref cmsgCfg
 */
+#include "cmsg.h"
 #include "fsutils.h"
 
 void warnCantOpenFile(const char*fname);
