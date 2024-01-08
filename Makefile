@@ -1,6 +1,6 @@
 
 # result exe filepath
-target_fn=main
+target_fn=wordinter
 
 
 src=src

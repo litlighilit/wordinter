@@ -1,5 +1,5 @@
 /** @mainpage
- *  @brief @c Word Interpreter
+ *  @brief @c Word Interface
  *  @brief a file-based search engine 
  * 
  *  
