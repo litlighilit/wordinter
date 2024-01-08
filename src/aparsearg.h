@@ -223,10 +223,14 @@ typedef struct {
 } Usages;
 
 
-/// initalize a @ref Usages object with an array of c-string
-Usages newUsages(const char* nullEnded[]/**a c-string array, terminated by `NULL`*/);
+/** initalize a @ref Usages object with an array of c-string
+ @param[in] nullEnded [copied] a c-string array, terminated by `NULL`
+*/
+Usages newUsages(const char* nullEnded[]);
 
-/// add @p usage string to a @ref Usages pointer @p p
+/** add @p usage string to a @ref Usages pointer @p p
+ @param[in] usage [copied]
+*/
 void addUsage(Usages*p, const char*usage);
 
 /// @note all argument shall be const c-string. i.e. `const char*`
