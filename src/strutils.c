@@ -99,11 +99,12 @@ int stripStr(CharSeq*p, const CharSeq s, int start, bool rightUntilEnd){
 PairS splitQuo2(const CharSeq s, char sep){
     PairS res;
 
+    int n, pos; // avoid c++'s crosses initialization of ...
     if(s.len==0) goto RetEmpty;
 
     // then len>=1
-    int pos = 0; // parse position
-    int n = stripStr(&res.left, s, pos, false);
+    pos = 0; // parse position
+    n = stripStr(&res.left, s, pos, false);
     if(n==-1) goto RetEmpty;
     
     pos += n;

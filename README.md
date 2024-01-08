@@ -15,6 +15,7 @@
 ### compile
 - target both linux and windows
 - build via `make`
+- compatiable with c++ (can be compiled via c++ compiler)
 - build document via `doxygen`
 - using git as VCS
 - self-write a framework for `doctest`

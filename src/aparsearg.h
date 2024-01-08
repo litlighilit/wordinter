@@ -234,7 +234,25 @@ Usages newUsages(const char* nullEnded[]);
 void addUsage(Usages*p, const char*usage);
 
 /// @note all argument shall be const c-string. i.e. `const char*`
-#define USAGES(...) newUsages((const char*[]){__VA_ARGS__,NULL})
+#ifdef __cplusplus
+/*to avoid  error: taking address of temporary array*/
+#include <initializer_list>
+inline Usages _MY_USAGES(std::initializer_list<const char*> args){
+    const char**nullEnded = (new const char*[args.size()+1]);
+    int i=0;
+    for(const char* const item: args){
+        nullEnded[i++] = item;
+    }
+    nullEnded[i]=NULL;
+    Usages res = newUsages(nullEnded);
+    delete[] nullEnded;
+    return res;
+}
+#define USAGES(...) _MY_USAGES({__VA_ARGS__})
+
+#else
+#define USAGES(...) newUsages( (const char*[]){__VA_ARGS__,NULL} )
+#endif
 
 typedef struct{
     const char* proj;

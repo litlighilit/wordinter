@@ -65,12 +65,18 @@
 #define setItem uncheckedSetItem
 #endif // #ifndef SEQ_CHECK_RANGE
 
+#ifdef __cplusplus
+#define _MY_GET_TYPE(d) (decltype(d))
+#else // c can't and needn't explicitly cast from (void*) to other pointer
+#define _MY_GET_TYPE(d)
+#endif
+
 #define addItem(seq, item) do{\
     uncheckedSetItem((seq), (seq).len, (item)); \
     (seq).len++; \
     if((seq).len==(seq).cap){  \
         (seq).cap*=2; \
-        (seq).data = realloc((seq).data, (seq).cap*(seq).itemSize);\
+        (seq).data = _MY_GET_TYPE(seq.data)realloc((seq).data, (seq).cap*(seq).itemSize);\
     }\
 }while(0)
 
@@ -79,7 +85,7 @@
     (seqp)->len++; \
     if((seqp)->len==(seqp)->cap){  \
         (seqp)->cap*=2; \
-        (seqp)->data = realloc((seqp)->data, (seqp)->cap*(seqp)->itemSize);\
+        (seqp)->data = _MY_GET_TYPE((seqp)->data)realloc((seqp)->data, (seqp)->cap*(seqp)->itemSize);\
     }\
 }while(0)
 

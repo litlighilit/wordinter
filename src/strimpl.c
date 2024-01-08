@@ -17,13 +17,13 @@ CharSeq charpToSeq(const char* p){
     _initStr(res);
     res.len = strlen(p);
     res.cap = res.len+1;// avoid crash if addItem
-    res.data = malloc(res.cap);
+    res.data = (char*)malloc(res.cap);
     memcpy(res.data, p, res.len);
     return res;
 }
 
 char* cstr(const CharSeq s){
-    char* res=malloc(s.len+1);
+    char* res = (char*)malloc(s.len+1);
     memcpy(res, getData(s), s.len);
     res[s.len]='\0';
     return res;
@@ -34,7 +34,7 @@ CharSeq copyCharSeq(const CharSeq s){
     _initStr(res);
     res.cap = s.cap;
     res.len = s.len;
-    res.data = malloc(res.len);
+    res.data = (char*)malloc(res.len);
     forIndex(idx, s){
         setItem(res, idx, getItem(s, idx));
     }

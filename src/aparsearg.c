@@ -18,7 +18,7 @@ bool AlwaysGoOn(const char* _){return true;}
 
 ArgParser newArgParser(int argc, char* const argv[],
      const char* help ){
-    ArgParser res = malloc(sizeof(ArgParserObj));
+    ArgParser res = (ArgParser)malloc(sizeof(ArgParserObj));
     res->preArgHook=AlwaysGoOn;
     res->help = help;
 
@@ -113,7 +113,7 @@ void addArgHelp(ArgParser parser, const char* itemName, const char* help){
     assert(help!=NULL);
     
     static bool PreAdded = false; // ensure once
-    static char* Pre = "args:\n";
+    static const char* Pre = "args:\n";
     if(!PreAdded){
         strAppendp(parser->arghelps, Pre);
         PreAdded=true;
@@ -162,7 +162,7 @@ ParseArgRes parseArgs(ArgParser parser){
                 
             }else{
                 if(strlen(arg)>2){// not impl multi-short option
-                    res.err="haven't supported multiply short option";
+                    res.err=(char*)"haven't supported multiply short option";
                     goto ClnRet;
                 }
                 sht=arg[1];
@@ -184,6 +184,9 @@ ParseArgRes parseArgs(ArgParser parser){
             if(val==NULL) val=argv[++i];
             if(!positive) goto UnknownOpt;
             if(val==NULL) goto NoValErr;
+
+            // avoid c++'s crosses initialization of 'int ord'
+            {
             int ord = _MapOrd(sht);
             if(parser->keyAdded[_MapOrd(sht)].name!=NULL){
                 res.keyvals[ord]=val;
@@ -194,29 +197,33 @@ ParseArgRes parseArgs(ArgParser parser){
 
                 continue;
             }
+            }
 
             // fallthrough
             UnknownOpt:
-                ;char*pre = "unknow option: ";
+                {
+                const char*pre = "unknow option: ";
                 size_t eLen = strlen(pre)+1;
-                char*err=malloc(eLen+1);
+                char*err=(char*)malloc(eLen+1);
                 if(!positive) sht = sht - 'a' + 'A';
                 sprintf(err, "%s%c", pre, sht);
                 res.err=err;
                 goto ClnRet;
+                }
 
             NoValErr:
-                ;char*opt; 
+                {
+                char*opt; 
                 if(longOpt) opt=newCStr(longOpt);
                 else {
-                    opt=malloc(2);
+                    opt=(char*)malloc(2);
                     opt[0]=sht;
                     opt[1]='\0';
                 }
                 res.err=catCStr("expected a value after the key: ", opt);
                 free(opt);
                 goto ClnRet;
-
+                }
             ClnRet:
                 free(longOpt);
                 return res;
@@ -298,7 +305,7 @@ void printAllArgsHelp(ArgParser parser){
         bool ifLong=false;
         newPre(pre, i, ifLong);
 
-        char* sep = tab2;
+        const char* sep = tab2;
         if(ifLong) sep=tab;
 
         IndPrintf("%s %s%s%s\n", pre, ndhelp[i].name, sep, ndhelp[i].help);
@@ -312,7 +319,7 @@ void printAllArgsHelp(ArgParser parser){
         bool ifLong=false;
         newPre(pre, i, ifLong);
 
-        char* sep = tab2;
+        const char* sep = tab2;
         if(ifLong) sep=tab;
 
         IndPrintf("[%s %s]...%s%s\n",pre, ndhelp[i].name, sep, ndhelp[i].help);

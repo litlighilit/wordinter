@@ -17,11 +17,10 @@ int main(int argc, char* argv[]){
     #undef K
 
     ProjInfo INFO = (ProjInfo){
-        .auther=Author, 
-        .license=License,
-
         .proj=Proj,
         .version=Version,
+        .license=License,
+        .auther=Author, 
         .desc=Desc,
         .usages=genUsage()
     };

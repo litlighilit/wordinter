@@ -31,20 +31,20 @@ const char* CMD[N_CMD][N_ALIAS] = {
 #define SsingleLinePara "singleLinePara"
 #define ssingleLinePara "l"
 
-#define ReprModes SmultiLinePara"("smultiLinePara") or "\
-        SsingleLinePara"("ssingleLinePara")"
+#define ReprModes SmultiLinePara "(" smultiLinePara ") or "\
+        SsingleLinePara "(" ssingleLinePara ")"
 
 #define SEP "\t:"
 const char* HELP[N_CMD] = {
-     QUE" WORD                 "SEP "query and print all positions of the word WORD"
-    ,CNT" FNAME|ORD N_PARA  "   SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
-    ,FCY" WORD                 "SEP "print the frequency of the word WORD"
-    ,LST" [FNAME|ORD]          "SEP "print content of FNAME or indexed in ORD or print all filenames"
-    ,SRC" DIR|FPATH            "SEP "load all files in DIR or only file"
-    ,MOD" [MODE]               "SEP "switch between or switch mode to " ReprModes
-    ,HLP" [CMD]                "SEP "print all help or for a certain CMD"
-    ,ALI" [CMD]                "SEP "print all alias or for a certain CMD"
-    ,QUI"|exit                 "SEP "quit"
+     QUE" WORD                 " SEP "query and print all positions of the word WORD"
+    ,CNT" FNAME|ORD N_PARA  "    SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
+    ,FCY" WORD                 " SEP "print the frequency of the word WORD"
+    ,LST" [FNAME|ORD]          " SEP "print content of FNAME or indexed in ORD or print all filenames"
+    ,SRC" DIR|FPATH            " SEP "load all files in DIR or only file"
+    ,MOD" [MODE]               " SEP "switch between or switch mode to " ReprModes
+    ,HLP" [CMD]                " SEP "print all help or for a certain CMD"
+    ,ALI" [CMD]                " SEP "print all alias or for a certain CMD"
+    ,QUI"|exit                 " SEP "quit"
 };
 
 bool priHelp(int n){
@@ -81,7 +81,7 @@ Ret:
 
 bool priHelpOf(const CharSeq dest){
     int ord = cmdOrd(dest);
-    char*help;
+    const char*help;
     bool found = ord==-1;
     if(found){
         help=(char*)HELP[ord];
@@ -97,7 +97,7 @@ void printFcy(int fre){msgl("word frequency: %d", fre);}
 
 void printPs(){msg(">> ");}
 
-char* getModeS(const Interpreter* pinterp) {return pinterp->multiLinePara?SmultiLinePara:SsingleLinePara;}
+const char* getModeS(const Interpreter* pinterp) {return pinterp->multiLinePara?SmultiLinePara:SsingleLinePara;}
 
 // return -1 if unknown
 int isMultiStr(const CharSeq s){
@@ -114,7 +114,7 @@ int isMultiStr(const CharSeq s){
 }
 
 void enterRepl(Interpreter* pinterp){
-    char* mode_s = getModeS(pinterp);
+    const char* mode_s = getModeS(pinterp);
     msgl("entering repl in %s mode...", mode_s);
     CharSeq line;
     while( printPs(), (line=getLine()), line.len!=0 ){
@@ -153,6 +153,7 @@ bool _ordFileArg(int*ordp, const CharSeq arg, RecSeq rs, char** const filenamep)
     *ordp = fileOrd;
     return isOrd;
 }
+
 enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     enum Flag ret = FSucc;
     if(cmd.len==0) return FEmptyCmd;
@@ -164,6 +165,9 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     char* fnameArg=NULL;
     int fileArgOrd;
     bool isArgOrd;
+    int cnt;
+    bool succParseInt;
+    PairS si;
     #define check_arg(nCmd) do{\
         if(args.len==0){\
             warn("missing arg! Here is help:");\
@@ -176,28 +180,31 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     switch (ord)
     {
     case 0:
+        {
         check_arg(0);
         char* c_word4qry = cstr(args);
         queryAll(*pinterp, c_word4qry);
         free(c_word4qry);
+        }
         break;
     case 1:
-        ;PairS si = splitQuo2(args, ' ');
+        si = splitQuo2(args, ' ');
 
         isArgOrd = _ordFileArg(&fileArgOrd, si.left, pinterp->db, &fnameArg);
 
         if(fileArgOrd==-1) goto FileNotFound;
 
+        {
         int nPara;
-        bool succ = parseInt(si.right, &nPara);
-        if(!succ){
+        succParseInt = parseInt(si.right, &nPara);
+        if(!succParseInt){
             warn("bad int input! You shall input:"); priHelp(1);
             
             ret = FTypeErr;
             goto Clean;
         }
 
-        int cnt = countWordOf(*pinterp, fileArgOrd, nPara);
+        cnt = countWordOf(*pinterp, fileArgOrd, nPara);
         if(cnt==FileNotFoundErr){
             FileNotFound:
             if(isArgOrd) warn("no file indexed in %d found", fileArgOrd);
@@ -206,15 +213,16 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         else printCnt(cnt);
 
         
-
+        }
         break;
     case 2:
+        {
         check_arg(2);
         char* c_word4fcy = cstr(args);
         int fcy = countFrequency(*pinterp, c_word4fcy);
         printFcy(fcy);
         free(c_word4fcy);
-
+        }
         break;
     case 3:
         if(args.len==0) fileArgOrd = 0;
@@ -222,12 +230,12 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
             isArgOrd = _ordFileArg(&fileArgOrd, args, pinterp->db, &fnameArg);
             if(fileArgOrd==-1) goto FileNotFound;
         }
-
+        {
         int nFiles = listFile(*pinterp, fileArgOrd);
 
         if(nFiles==0) goto FileNotFound;
         else info("%d files listed", nFiles);
-
+        }
         break;
     case 4:
         check_arg(4);
@@ -244,13 +252,14 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
             pinterp->multiLinePara = !pinterp->multiLinePara;
             goto PriLineMode;
         }
+        {
         int multiMode = isMultiStr(args);
         if(multiMode==-1){
             warn("got unknown mode. please run 'help mode' for help");
             break;
         }
         pinterp->multiLinePara=multiMode;
-        
+        }
       PriLineMode:
         info("switch to mode '%s'", getModeS(pinterp));
         break;
@@ -278,10 +287,12 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         break;
 
     default:
-        ;char* c_key=cstr(key);
+        {
+        char* c_key=cstr(key);
         warn("unknow command %s, type \"%s\" for help", c_key, HLP);
         free(c_key);
         ret = FUnknowCmd;
+        }
     }
 
 Clean:

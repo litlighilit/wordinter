@@ -86,10 +86,12 @@ int countWordOf(const Interpreter interp, int fileOrd, int para){
     }
 
 CountWord:
-    ;int cnt = 0;
+    ;
+    {int cnt = 0;
     doInPara(Para, cnt++);
     deinitSeq(Para);
     return cnt;
+    }
 
 RangeErr:
     return IndexErr;

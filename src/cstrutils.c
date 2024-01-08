@@ -5,7 +5,7 @@
 #include "cstrutils.h"
 
 char* newCStr(const char* s){
-    char*res=malloc(strlen(s)+1);
+    char*res=(char*)malloc(strlen(s)+1);
     strcpy(res,s);
     return res;
 }
@@ -14,14 +14,14 @@ char* newSubCStr(const char* s, int n){
     size_t len = n;
     size_t slen = strlen(s);
     if(slen<n) len=slen;
-    char*res = malloc(len);
+    char*res = (char*)malloc(len);
     memcpy(res, s, len);
     res[len]='\0';
     return res;
 }
 
 char* catCStr(const char*a, const char*b){
-    char*res = malloc(strlen(a)+strlen(b)+1);
+    char*res = (char*)malloc(strlen(a)+strlen(b)+1);
     strcpy(res,a);
     strcat(res, b);
 
@@ -43,12 +43,12 @@ char* joinPath(const char* dir, const char*fname){
 
     char*res;
     if(!isOsSep(last)){
-        res=malloc(++resLen);
+        res=(char*)malloc(++resLen);
         strcpy(res, dir);
         res[dLen]=OS_SEP;
         res[dLen+1]='\0';
     }else{
-        res=malloc(resLen);
+        res=(char*)malloc(resLen);
         strcpy(res, dir);
     }
     strcat(res, fname);

@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #define err(msg, ...) do{\
-    fprintf(stderr, "[ERR] "msg ,##__VA_ARGS__);\
+    fprintf(stderr, "[ERR] " msg ,##__VA_ARGS__);\
     fputc('\n', stderr);\
     exit(ERR_RET);\
 }while(0)

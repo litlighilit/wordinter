@@ -1,4 +1,5 @@
-/build
+/build/
+/build_cpp/
 /doc
 .vscode/
 /test/cache/
