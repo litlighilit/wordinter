@@ -1,8 +1,7 @@
 /build/
-/build_cpp/
+/build_*/
 /doc
 .vscode/
 /test/cache/
 /test/test_data
 __pycache__
-src/__nouse
