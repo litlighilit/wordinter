@@ -5,7 +5,7 @@
 /*doctest:
 
 // ## using stream in a C-style
-  CharSeq s = charpToSeq("This is a String, and some others.");
+  CharSeq s = charpToSeq("Chapter 12. Good-bye");
   StrStream stream = toStrStream(s);
   
   while(1){
@@ -14,13 +14,9 @@
       printf("%d: ", str.len);printlnCharSeq(str);
       deinitSeq(str);
   }
-  //-> 4: This
-  //-> 2: is
-  //-> 1: a
-  //-> 6: String
-  //-> 3: and
-  //-> 4: some
-  //-> 6: others
+  //-> 7: Chapter
+  //-> 2: 12
+  //-> 8: Good-bye
 
   deinitSeq(s);
 
@@ -29,18 +25,17 @@
   StrStream stream2 = toStrStream(s2);
   
   while(1){
-      CharSeq str = tokenToCharSeq(nextPara(&stream2), true);
+      CharSeq str = tokenToCharSeq(nextPara(&stream2, true));
       if(str.len==0)break;
       printf("%d: ", str.len);printlnCharSeq(str);
       deinitSeq(str);
   }
-  //-> 4: This
-  //-> 2: is
-  //-> 1: a
-  //-> 6: String
-  //-> 3: and
-  //-> 4: some
-  //-> 6: others
+  //-> 21:   This is a paragraph
+  //-> 35:   And the second one,
+  //-> still the 2nd
+  //-> 21:   begin no.3
+  //-> also 3~~
+  //-> 3:   4
   deinitSeq(s2);
 
 // ## NOTE
