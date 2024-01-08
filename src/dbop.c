@@ -60,7 +60,7 @@ void queryAll(const Interpreter interp, const char* word){
 
 #define checkFname(rec, fname) ( strcmp((rec).fname, fname) == 0 )
 
-enum Err countWordOf(const Interpreter interp, int fileOrd, int para){
+int countWordOf(const Interpreter interp, int fileOrd, int para){
     
     RecSeq rs = interp.db;
     if(fileOrd<1 || fileOrd>rs.len) return FileNotFoundErr;

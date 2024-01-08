@@ -59,7 +59,7 @@ void queryAll(const Interpreter interp, const char* word);
  @retval @ref FileNotFoundErr if no record with @p fileOrd can be found(i.e. out of range)
  @retval @ref IndexErr if @p para is over range
 */ 
-enum Err countWordOf(const Interpreter interp, int fileOrd, int para);
+int countWordOf(const Interpreter interp, int fileOrd, int para);
 
 /// count the frequency of @p word
 int countFrequency(const Interpreter interp, const char* word);
