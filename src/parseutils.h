@@ -21,13 +21,13 @@
   deinitSeq(ss);
   deinitSeq(s);
 
-// # for punctuations and spaces
+// # for punctuations(not '-') and spaces
   CharSeq s2 = charpToSeq("a,String");
 
-  CharSeq ss2 = parseUntilPunc(s2, 0);
+  CharSeq ss2 = parseUntilW(s2, 0);
   printlnCharSeq(ss2);
   
-  int n2 = skipPunc(s2, ss2.len);
+  int n2 = skipW(s2, ss2.len);
   printf("%d\n", n2);
 
 
@@ -62,10 +62,13 @@ typedef CharSeq (*ParseFunc)(const CharSeq, char, int);
 */
 CharSeq parseUntil(const CharSeq s, char until, int start);
 
-/// XXX: space is treated as a punctuation too
-int skipPunc(const CharSeq, int start);
+/// skip space and punctuations except '-'
+int skipW(const CharSeq, int start);
 
-CharSeq parseUntilPunc(const CharSeq s, int start);
+/** parse until word border
+  @note e.g. good-bye is considered as one word
+*/
+CharSeq parseUntilW(const CharSeq s, int start);
 
 /// parse until two @p until characters are met
 CharSeq parseUntil2(const CharSeq s, char until, int start);

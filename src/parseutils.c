@@ -42,14 +42,27 @@ CharSeq parseUntil2(const CharSeq s, char until, int start){
   #undef charEq
 }
 
-bool isPunc(char c){ return (19<c&&c<'A' || 'Z'<c && c<'a' || 'z'<c);}
-
-int skipPunc(const CharSeq s, int start){
-    RETskipBy(s, isPunc, start);
+bool isWordBorder(char c){
+  /* ord of char
+    ' ' 32
+    - 45
+    0:48 9:57
+    A:65 Z:90 ... */
+  return (
+  #ifndef DASH_IN_WORD
+     c!='-'&&
+  #endif
+     31<c&&c<'A' ||
+    'Z'<c&&c<'a' ||
+    'z'<c);
 }
 
-#define isPuncAt(s, idx) isPunc(getItem(s,idx))
-CharSeq parseUntilPunc(const CharSeq s, int start){
-    RETparseUntilBy(s, isPuncAt, start);
+int skipW(const CharSeq s, int start){
+    RETskipBy(s, isWordBorder, start);
+}
+
+#define isWordBorderAt(s, idx) isWordBorder(getItem(s,idx))
+CharSeq parseUntilW(const CharSeq s, int start){
+    RETparseUntilBy(s, isWordBorderAt, start);
 }
 

@@ -21,8 +21,8 @@ Token nextToken(StrSepStream* ps){
 
 Token nextWord(StrStream* ps){
     RETnextWith(ps, 
-        parseUntilPunc(ps->data, ps->idx),
-        skipPunc(ps->data, ps->idx)
+        parseUntilW(ps->data, ps->idx),
+        skipW(ps->data, ps->idx)
     );
 }
 

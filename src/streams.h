@@ -24,7 +24,7 @@
 
   deinitSeq(s);
 
-// ## punctuation-sep
+// ## word-border-sep
   CharSeq s2 = charpToSeq("  This is a paragraph\n\n  And the second one,\nstill the 2nd\n\n\n  begin no.3\nalso 3~~\n\n  4");
   StrStream stream2 = toStrStream(s2);
   
@@ -95,7 +95,7 @@ typedef struct{
 /// @retval `an empty token` if encounter sep in the begining
 Token nextToken(StrSepStream* ps);
 
-/// @note ignore ps->sep and treat all punctuations as sep
+/// @note ignore ps->sep and treat sapces and punctuations except '-' as sep
 /// @returns a token of a word (may empty if met end)
 Token nextWord(StrStream* ps);
 
