@@ -309,6 +309,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         PRI(Alias)
         break;
     case 8:
+        if(args.len!=0){
+            warn("quit accepts no argument! Maybe you want another cmd?");
+            goto Clean;
+        }
         ret = FQuit;
         goto Clean;
 
