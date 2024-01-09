@@ -33,11 +33,14 @@ const char* CMD[N_CMD][N_ALIAS] = {
 #define ReprModes SmultiLinePara "(" smultiLinePara ") or "\
         SsingleLinePara "(" ssingleLinePara ")"
 
+#define ICASE_FLAG "-i"
+#define ICASE_HELP " if " ICASE_FLAG " is given, ignore case"
+
 #define SEP "\t:"
 const char* HELP[N_CMD] = {
-     QUE" WORD                 " SEP "query and print all positions of the word WORD"
+     QUE" [" ICASE_FLAG "] WORD            " SEP "query and print all positions of the word WORD." ICASE_HELP
     ,CNT" FNAME|ORD N_PARA  "    SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
-    ,FCY" WORD                 " SEP "print the frequency of the word WORD"
+    ,FCY" [" ICASE_FLAG "] WORD            " SEP "print the frequency of the word WORD." ICASE_HELP
     ,LST" [FNAME|ORD]          " SEP "print content of FNAME or indexed in ORD or print all filenames"
     ,SRC" DIR|FPATH            " SEP "load all files in DIR or only file"
     ,MOD" [MODE]               " SEP "switch between or switch mode to " ReprModes
@@ -176,17 +179,41 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         }\
     }while(0)
 
+    /**
+     @param[out] argIn char*
+     @param[in] flag bool if get @p flagStr, assign as true
+    */
+    #define parse_flag(argIn, flag, flagStr) do{\
+        si = splitQuo2(args, ' ');\
+        CharSeq word;\
+        if(si.right.len==0) word=si.left;\
+        else{\
+            if(!seqEqStr(si.left, flagStr)){\
+                char* barg = cstr(si.left);\
+                warn("bad arg given, only %s is expected, but got %s", flagStr, barg);\
+                free(barg);\
+                goto Clean;\
+            }\
+            flag = true;\
+            word = si.right;\
+        }\
+        argIn = cstr(word);\
+    }while(0)
+
     switch (ord)
     {
     case 0:
         {
         check_arg(0);
-        char* c_word4qry = cstr(args);
-        queryAll(*pinterp, c_word4qry);
+        bool ignoreCase=false;
+        char* c_word4qry;
+        parse_flag(c_word4qry, ignoreCase, ICASE_FLAG);
+        queryAll(*pinterp, c_word4qry, ignoreCase);
         free(c_word4qry);
         }
         break;
     case 1:
+        check_arg(1);
         si = splitQuo2(args, ' ');
 
         isArgOrd = _ordFileArg(&fileArgOrd, si.left, pinterp->db, &fnameArg);
@@ -217,8 +244,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     case 2:
         {
         check_arg(2);
-        char* c_word4fcy = cstr(args);
-        int fcy = countFrequency(*pinterp, c_word4fcy);
+        char* c_word4fcy;
+        bool ignoreCase = false;
+        parse_flag(c_word4fcy, ignoreCase, ICASE_FLAG);
+        int fcy = countFrequency(*pinterp, c_word4fcy, ignoreCase);
         printFcy(fcy);
         free(c_word4fcy);
         }

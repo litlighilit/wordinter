@@ -29,7 +29,7 @@
 }while(0)
 
 // filterDo(const RecSeq rs, const char* word, doWith_pos) where callback can access `pos`
-#define filterDo(interp, word, doWith_pos) do{\
+#define filterDo(interp, filter, word, doWith_pos) do{\
     RecSeq rs=interp.db;\
     forIndex(__i, rs){\
         Rec rec = getItem(rs, __i);\
@@ -43,7 +43,7 @@
             if(para.len==0)break;\
             pos.para=iPara;\
             doInPara(para,\
-                if(seqEqStr(Word, word)){\
+                if(filter(Word, word)){\
                     pos.idx = iWord;\
                     doWith_pos;\
                 }\
@@ -53,8 +53,14 @@
     }\
 }while(0)
 
-void queryAll(const Interpreter interp, const char* word){
-    filterDo(interp, word, printPos(pos));
+typedef bool (*Cmper)(const CharSeq seq, const char* s);
+
+void queryAll(const Interpreter interp, const char* word, bool ignoreCase){
+    Cmper cmp;
+    if(ignoreCase) cmp = seqIEqStr;
+    else cmp = seqEqStr;
+    
+    filterDo(interp, cmp, word, printPos(pos));
 }
 
 
@@ -97,9 +103,13 @@ RangeErr:
     return IndexErr;
 }
 
-int countFrequency(const Interpreter interp, const char* word){
+int countFrequency(const Interpreter interp, const char* word, bool ignoreCase){
+    Cmper cmp;
+    if(ignoreCase) cmp = seqIEqStr;
+    else cmp = seqEqStr;
+
     int cnt=0;
-    filterDo(interp, word, cnt++);
+    filterDo(interp, cmp, word, cnt++);
     return cnt;
 }
 

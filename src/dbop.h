@@ -52,7 +52,7 @@ enum Err{
 };
 
 /// query and print all @p word positions
-void queryAll(const Interpreter interp, const char* word);
+void queryAll(const Interpreter interp, const char* word, bool ignoreCase);
 
 /** count word numbers in paragragh @p para of file at @p fileOrd
  @param fileOrd file order counting from 1 (Not 0)
@@ -62,7 +62,7 @@ void queryAll(const Interpreter interp, const char* word);
 int countWordOf(const Interpreter interp, int fileOrd, int para);
 
 /// count the frequency of @p word
-int countFrequency(const Interpreter interp, const char* word);
+int countFrequency(const Interpreter interp, const char* word, bool ignoreCase);
 
 /**
  list:
