@@ -44,11 +44,20 @@
   printf("%d\n", n); //-> 3
 
 // # getLine
+if(false){
   puts("input something:");
   CharSeq line = getLine();
   printlnCharSeq(line);
 
   deinitSeq(line);
+}
+// # seqIEqStr
+  {
+  CharSeq s=charpToSeq("asdHp");
+  bool ieq = seqIEqStr(s, "asDhp");
+  printf("%d\n", ieq);
+  deinitSeq(s);
+  }
 */
 
 #include <stdbool.h>
@@ -98,5 +107,8 @@ CharSeq subStrFrom(const CharSeq s, int start);
 /// @param[in] res a pointer to store result interger, untouched if not successful
 /// @returns whether is successful
 bool parseInt(const CharSeq s, int*res);
+
+/** like seqEqStr() but ignore case*/
+bool seqIEqStr(const CharSeq seq, const char* s);
 
 #endif //#ifndef _STRUTILS_H

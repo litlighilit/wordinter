@@ -129,6 +129,16 @@ PairS splitQuo2(const CharSeq s, char sep){
 }
 
 
+#define upper(c) (c & -33) // ~('a'-'A') -> -33
+bool seqIEqStr(const CharSeq seq, const char* s){
+    if(seq.len!=strlen(s)) return false;
+    forIndex(i, seq){
+        bool eq = upper(uncheckedGetItem(seq, i)) == upper(s[i]);
+        if(!eq) return false;
+    }
+    return true;
+}
+
 bool parseInt(const CharSeq s, int* res){
     char*cs=cstr(s);
     int n = sscanf(cs, "%d", res);
