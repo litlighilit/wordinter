@@ -5,23 +5,33 @@
 #ifdef _WIN32
 #include <windows.h>
 bool vted = false;
-int enableVT(){
+DWORD cmsg_pre_dwMode = 0; // used to recover
+void _cmsg_recover_console_mode(){
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hOut == INVALID_HANDLE_VALUE) return;
+    SetConsoleMode(hOut, cmsg_pre_dwMode);
+}
+
+/// @warn can not reenter
+/// @return 
+int _cmsg_enableVT(){
     // Set output mode to handle virtual terminal sequences
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hOut == INVALID_HANDLE_VALUE) goto RetErr;
     DWORD dwMode = 0;
     if (!GetConsoleMode(hOut, &dwMode)) goto RetErr;
-
+    cmsg_pre_dwMode = dwMode;
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     if (!SetConsoleMode(hOut, dwMode)) goto RetErr;
     
+    atexit(_cmsg_recover_console_mode);
     return 0;
     RetErr:
     return GetLastError();
 }
 #else
 bool vted = true;
-int enableVT(){ return 0; }
+int _cmsg_enableVT(){ return 0; }
 #endif
 
 bool colorEnabled = false;
@@ -33,7 +43,7 @@ const char* cmsg_colors[3]={"","",""};
 static int CmsgColorOn(){
     if(colorEnabled) return 0;
     if(!vted){
-        int ret = enableVT();
+        int ret = _cmsg_enableVT();
         if(ret!=0) return ret;
         vted = true;
     }
