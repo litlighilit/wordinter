@@ -55,12 +55,16 @@
 
 typedef bool (*Cmper)(const CharSeq seq, const char* s);
 
-void queryAll(const Interpreter interp, const char* word, bool ignoreCase){
+bool queryAll(const Interpreter interp, const char* word, bool ignoreCase){
     Cmper cmp;
     if(ignoreCase) cmp = seqIEqStr;
     else cmp = seqEqStr;
     
-    filterDo(interp, cmp, word, printPos(pos));
+    bool hasPos = false;
+    #define doWith do{ hasPos=true;printPos(pos); } while(0)
+    filterDo(interp, cmp, word, doWith );
+
+    return hasPos;
 }
 
 

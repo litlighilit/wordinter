@@ -208,7 +208,9 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         bool ignoreCase=false;
         char* c_word4qry;
         parse_flag(c_word4qry, ignoreCase, ICASE_FLAG);
-        queryAll(*pinterp, c_word4qry, ignoreCase);
+        bool hasPos = queryAll(*pinterp, c_word4qry, ignoreCase);
+        const char* modePs = ignoreCase?"(even ignoring cases)":"";
+        if(!hasPos) info("no one of `%s` found %s", c_word4qry, modePs);
         free(c_word4qry);
         }
         break;

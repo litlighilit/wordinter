@@ -51,8 +51,10 @@ enum Err{
   
 };
 
-/// query and print all @p word positions
-void queryAll(const Interpreter interp, const char* word, bool ignoreCase);
+/** query and print all @p word positions
+ * @returns whether print any, i.e. if any one found
+*/
+bool queryAll(const Interpreter interp, const char* word, bool ignoreCase);
 
 /** count word numbers in paragragh @p para of file at @p fileOrd
  @param fileOrd file order counting from 1 (Not 0)
