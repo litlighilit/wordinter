@@ -17,8 +17,8 @@ void _cmsg_recover_console_mode(){
 int _cmsg_enableVT(){
     // Set output mode to handle virtual terminal sequences
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hOut == INVALID_HANDLE_VALUE) goto RetErr;
     DWORD dwMode = 0;
+    if (hOut == INVALID_HANDLE_VALUE) goto RetErr;
     if (!GetConsoleMode(hOut, &dwMode)) goto RetErr;
     cmsg_pre_dwMode = dwMode;
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
