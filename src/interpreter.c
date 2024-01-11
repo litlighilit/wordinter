@@ -156,6 +156,11 @@ bool _ordFileArg(slen_t*ordp, const CharSeq arg, RecSeq rs, char** const filenam
     return isOrd;
 }
 
+static void priFileNotFound(bool isArgOrd, slen_t fileArgOrd, const char* fnameArg){
+    if(isArgOrd) warn("no file indexed in %" PRI_SLEN " found", fileArgOrd);
+    else warn("no file named '%s' found", fnameArg);
+}
+
 enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     enum Flag ret = FSucc;
     if(cmd.len==0) return FEmptyCmd;
@@ -201,6 +206,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         argIn = cstr(word);\
     }while(0)
 
+    #define _PriNoFileFound() priFileNotFound(isArgOrd, fileArgOrd, fnameArg)
     switch (ord)
     {
     case 0:
@@ -221,7 +227,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
 
         isArgOrd = _ordFileArg(&fileArgOrd, si.left, pinterp->db, &fnameArg);
 
-        if(fileArgOrd==-1) goto FileNotFound;
+        if(fileArgOrd==-1)_PriNoFileFound();
         else{
             size_t nPara;
             succParseInt = parseSize(si.right, &nPara);
@@ -234,11 +240,8 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
             }
 
             cnt = countWordOf(*pinterp, fileArgOrd, nPara);
-            if(cnt==FileNotFoundErr){
-                FileNotFound:
-                if(isArgOrd) warn("no file indexed in %" PRI_SLEN " found", fileArgOrd);
-                else warn("no file named '%s' found", fnameArg);
-            }else if(cnt==IndexErr) warn("The number %zu is out of range", nPara);
+            if(cnt==FileNotFoundErr)_PriNoFileFound();
+            else if(cnt==IndexErr) warn("The number %zu is out of range", nPara);
             else printCnt(cnt);
         }
         freePairS(si);
@@ -259,14 +262,14 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         if(args.len==0) fileArgOrd = 0;
         else{
             isArgOrd = _ordFileArg(&fileArgOrd, args, pinterp->db, &fnameArg);
-            if(fileArgOrd==-1) goto FileNotFound;
+            if(fileArgOrd==-1) _PriNoFileFound();
 
             si = splitQuo2(args, ' ');
 
             if(si.right.len==0){
                 size_t nFiles = listFile(*pinterp, fileArgOrd);
 
-                if(nFiles==0) goto FileNotFound;
+                if(nFiles==0)_PriNoFileFound();
                 else info("%zu files listed", nFiles);
             }else{
                 // use cnt as `para` to avoid defining a new symbol
@@ -278,7 +281,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
                 }else{
                     lfpErr = listFilePara(*pinterp, fileArgOrd, cnt);
                     if(lfpErr==lfpiePara) warn("out of paragraph range");
-                    else if (lfpErr==lfpieFile) goto FileNotFound;
+                    else if (lfpErr==lfpieFile)_PriNoFileFound();
                     else info("Para %zu listed", cnt);
                 }
             }
@@ -298,18 +301,15 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     case 5:
         if(args.len==0){
             pinterp->multiLinePara = !pinterp->multiLinePara;
-            goto PriLineMode;
+            info("switch to mode '%s'", getModeS(pinterp));
+        }else{
+            int multiMode = isMultiStr(args);
+            if(multiMode==-1){
+                warn("got unknown mode. please run 'help mode' for help");
+                break;
+            }
+            pinterp->multiLinePara=multiMode;
         }
-        {
-        int multiMode = isMultiStr(args);
-        if(multiMode==-1){
-            warn("got unknown mode. please run 'help mode' for help");
-            break;
-        }
-        pinterp->multiLinePara=multiMode;
-        }
-      PriLineMode:
-        info("switch to mode '%s'", getModeS(pinterp));
         break;
     case 6:
     #define PRI(dest) do{\
@@ -331,9 +331,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     case 8:
         if(args.len!=0){
             warn("quit accepts no argument! Maybe you want another cmd?");
-            goto Clean;
-        }
-        ret = FQuit;
+        }else ret = FQuit;
         goto Clean;
 
         break;
@@ -351,4 +349,5 @@ Clean:
     free(fnameArg);
     freePairS(pair);
     return ret;
+
 }
