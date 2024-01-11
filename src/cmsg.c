@@ -67,11 +67,22 @@ static void CmsgColorOff(){
     colorEnabled = false;
 }
 
-int cmsgCfg(bool enableColor){
-    if(enableColor) return CmsgColorOn();
-    else{
+static inline bool EnvNoColor(){
+    char* s = getenv(NO_COLOR_ENV);
+    return s!=NULL;
+}
+int cmsgCfg(enum cmsg_EnableColorLevel cl){
+    if(!cl){
         CmsgColorOff();
         return 0;
     }
+    if(cl==clOnIfEnvAllow){
+        if(EnvNoColor()){
+            CmsgColorOff();
+            return 0;
+        }
+        return CmsgColorOn();
+    }
+    return CmsgColorOn();
 }
 

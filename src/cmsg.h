@@ -13,6 +13,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+/// environment variable to disable color
+#define NO_COLOR_ENV "NO_COLOR"
 
 enum ColorIndex {
     ciGreen,
@@ -20,10 +22,16 @@ enum ColorIndex {
     ciRed,
 };
 
+enum cmsg_EnableColorLevel {
+    clOff,
+    clOnIfEnvAllow,
+    clOnAnyWay,
+};
+
 /**
   @param enableColor if enable color for following info/warn/err
 */
-int cmsgCfg(bool enableColor);
+int cmsgCfg(enum cmsg_EnableColorLevel cl);
 
 #define ESC "\x1b" // ESC
 #define EC(ns) (ESC "[" #ns "m")
@@ -58,7 +66,7 @@ extern const char* cmsg_colors[3];
 #define err(m,...)  (fcolorPri(cmsg_err, ciRed, "[ERR] "), fmsgl(cmsg_err, m, ## __VA_ARGS__), exit(ERR_RET))
 
 /// like cmsgCfg() but will give a warning if cfg fails
-#define cmsgWarnOnFailCfg(enableColor) (cmsgCfg(enableColor)==0||warn("can't init color output"))
+#define cmsgWarnOnFailCfg(enableColorLevel) (cmsgCfg(enableColorLevel)==0||warn("can't init color output"))
 
 // used by both interpreter and main
 #define sayBye() msgl("bye.");

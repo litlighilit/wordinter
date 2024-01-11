@@ -10,7 +10,7 @@
 
 int main(int argc, char* argv[]){
 
-    cmsgWarnOnFailCfg(true);
+    cmsgWarnOnFailCfg(clOnIfEnvAllow);
     
     #define K(arr) arr[1] // get "-x"'s 'x'
     const char singLineP = K(singleLineParaFlag);
