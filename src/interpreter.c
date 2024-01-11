@@ -41,7 +41,7 @@ const char* HELP[N_CMD] = {
      QUE" [" ICASE_FLAG "] WORD            " SEP "query and print all positions of the word WORD." ICASE_HELP
     ,CNT" FNAME|ORD N_PARA  "    SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
     ,FCY" [" ICASE_FLAG "] WORD            " SEP "print the frequency of the word WORD." ICASE_HELP
-    ,LST" [FNAME|ORD]  [PARA]  " SEP "print content of FNAME or indexed in ORD or print all filenames, if PARA is given, only list that paragrgh"
+    ,LST" [FNAME|ORD] [PARA]   " SEP "print all (or Para.PARA) content of FNAME or indexed in ORD or print all filenames"
     ,SRC" DIR|FPATH            " SEP "load all files in DIR or only file"
     ,MOD" [MODE]               " SEP "switch between or switch mode to " ReprModes
     ,HLP" [CMD]                " SEP "print all help or for a certain CMD"
