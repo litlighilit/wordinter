@@ -88,20 +88,17 @@ size_t countWordOf(const Interpreter interp, slen_t fileOrd, size_t para){
         CharSeq seq = next_para(pstream, interp.multiLinePara);
         if(seq.len==0)goto RangeErr;
         if(i==para){
-            Para = copyCharSeq(seq);
-            goto CountWord;
+            Para = seq;
+            break;
         }
         i++;
         deinitSeq(seq);
     }
 
-CountWord:
-    ;
-    {size_t cnt = 0;
+    size_t cnt = 0;
     doInPara(Para, cnt++);
     deinitSeq(Para);
     return cnt;
-    }
 
 RangeErr:
     return IndexErr;
