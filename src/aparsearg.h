@@ -61,10 +61,10 @@
 
   puts("args of c:");
   //forEach(codes, printlnCharSeq);
-  for(int i=0; i<codes.len; i++) printlnCharSeq(getItem(codes, i));
+  for(slen_t i=0; i<codes.len; i++) printlnCharSeq(getItem(codes, i));
 
   puts("the is args:");
-  for(int i=0; i<res.args.len; i++) printlnCharSeq(getItem(res.args, i));
+  for(slen_t i=0; i<res.args.len; i++) printlnCharSeq(getItem(res.args, i));
   
   //printAllArgsHelp(parser);
 

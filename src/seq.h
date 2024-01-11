@@ -12,11 +12,12 @@
 #include <stdlib.h> // malloc, free, exit
 
 #define DEF_SEQ_CAP 10
-
+typedef size_t slen_t;
+#define PRI_SLEN "zu"
 #define Seq(T) struct{\
     T*data;\
-    int len;\
-    int cap;\
+    slen_t len;\
+    slen_t cap;\
     int itemSize;\
 }
 
@@ -53,7 +54,7 @@
 #define uncheckedGetItem(seq, idx) ((seq).data[idx])
 #define uncheckedSetItem(seq, idx, val) do{ (seq).data[idx]=val;}while(0)
 
-#define IndexError(seq, idx) (fprintf(stderr, "File \"%s\", line %d\n  IndexError: index of %d out of range of seq `%s`(len=%d) ", __FILE__, __LINE__, idx, #seq, seq.len),exit(-1) )
+#define IndexError(seq, idx) (fprintf(stderr, "File \"%s\", line %d\n  IndexError: index of %" PRI_SLEN " out of range of seq `%s`(len=%" PRI_SLEN ") ", __FILE__, __LINE__, idx, #seq, seq.len),exit(-1) )
 #define checkedGetItem(seq, idx) ((idx)<(seq).len?(seq).data[idx]:(IndexError(seq, idx),seq.data[idx]) )
 #define checkedSetItem(seq, idx, val) do{ if((idx)>=(seq).len)IndexError(seq, idx); seq.data[idx]=(val);}while(0)
 
@@ -90,7 +91,7 @@
 }while(0)
 
 /// like [nim](https://nim-lang.org/docs/iterators.html#pairs.i%2Cseq%5BT%5D)'s `for i,_ in seq.pairs`
-#define forIndex(i, seq) for(int i=0; i<(seq).len; i++)
+#define forIndex(i, seq) for(slen_t i=0; i<(seq).len; i++)
 
 /// item forEach iter, @p callback will be passed a argument of the `T` type
 #define forEach(seq, callback) do{\
@@ -111,7 +112,7 @@
 }while(0)
 
 #define searchBy(res, seq, destKey, cmp) do{\
-    int __idx;\
+    slen_t __idx;\
     findIndex(__idx, seq, destKey, cmp);\
     res = uncheckedGetItem(seq, __idx);\
 }while(0)

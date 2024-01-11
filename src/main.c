@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
     if(args.err!=NULL) err("error: %s\n", args.err);
     if(args.args.len>1)
         err("only one positional argument as a directory to read from is allowed,\n"
-            " but got %d\n"
+            " but got %" PRI_SLEN "\n"
             " however, you can pass any number of files as input via `-f`", args.args.len);
 
     bool hasInput=false;

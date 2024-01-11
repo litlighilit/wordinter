@@ -146,7 +146,7 @@ ParseArgRes parseArgs(ArgParser parser){
             const char*val=NULL;
             if(arg[1]=='-'){ // if long opt
                 const char*opt=arg+2;
-                int iEq = findChar(opt, '=');
+                int iEq = rfindChar(opt, '=');
                 if(iEq!=-1){
                     longOpt = newSubCStr(opt, iEq);
                     val=opt+iEq+1;

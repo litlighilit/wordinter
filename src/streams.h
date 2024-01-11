@@ -11,7 +11,7 @@
   while(1){
       CharSeq str = tokenToCharSeq(nextWord(&stream));
       if(str.len==0)break;
-      printf("%d: ", str.len);printlnCharSeq(str);
+      printf(":" PRI_SLEN " ", str.len);printlnCharSeq(str);
       deinitSeq(str);
   }
   //-> 7: Chapter
@@ -27,7 +27,7 @@
   while(1){
       CharSeq str = tokenToCharSeq(nextPara(&stream2, true));
       if(str.len==0)break;
-      printf("%d: ", str.len);printlnCharSeq(str);
+      printf("%" PRI_SLEN ": ", str.len);printlnCharSeq(str);
       deinitSeq(str);
   }
   //-> 21:   This is a paragraph
@@ -56,13 +56,13 @@ typedef CharSeq Token;
 #define tokenToCharSeq(tok) tok
 
 typedef struct{
-    int idx;
+    slen_t idx;
     char sep;
     CharSeq data;
 } StrSepStream;
 
 typedef struct{
-    int idx;
+    slen_t idx;
     CharSeq data;
 } StrStream;
 

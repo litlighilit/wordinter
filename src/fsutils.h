@@ -12,7 +12,7 @@
   assert(dirExists(cdir));
   RecSeq seq = listDir(cdir);
 
-  printf("len: %d\n", seq.len);
+  printf("len: %" PRI_SLEN "\n", seq.len);
 
   forIndex(idx, seq){
     Rec rec = getItem(seq, idx);

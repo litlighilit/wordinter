@@ -120,7 +120,7 @@ void enterRepl(Interpreter* pinterp){
     msgl("entering repl in %s mode...", mode_s);
     CharSeq line;
     while( printPs(), (line=getLine()), line.len!=0 ){
-        int len = line.len;
+        slen_t len = line.len;
         line.len = len-1;
         enum Flag f = evalCmd(pinterp, line);
         if(f==FQuit){

@@ -17,7 +17,7 @@
 #define doInPara(para, doWith_Word) do{\
             StrStream wstream = toWordStream(para);\
             \
-            int __n=skipW(para,0);\
+            slen_t __n=skipW(para,0);\
             wstream.idx = __n;\
             \
             for(int iWord=PARAM_START; ; iWord++){\

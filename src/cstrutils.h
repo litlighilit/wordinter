@@ -37,6 +37,6 @@ char* newSubCStr(const char* s, int n);
 char* catCStr(const char*a, const char*b);
 
 /// @retval -1 if not found
-int findChar(const char* s, char c);
+int rfindChar(const char* s, char c);
 
 #endif //#ifndef _CSTRUTILS_H

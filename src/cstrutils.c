@@ -28,7 +28,7 @@ char* catCStr(const char*a, const char*b){
     return res;
 }
 
-int findChar(const char* s, char c){
+int rfindChar(const char* s, char c){
     for(int i=strlen(s)-1; i>-1; i--)
         if(c==s[i]) return i;
     return -1;

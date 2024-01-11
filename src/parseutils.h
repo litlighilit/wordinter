@@ -12,8 +12,8 @@
 
   deinitSeq(ss); // ss.data destoryed
 
-  int n = skip(s, ' ', ss.len);
-  printf("%d\n", n); //-> 3
+  slen_t n = skip(s, ' ', ss.len);
+  printf("%" PRI_SLEN "\n", n); //-> 3
 
   ss = parseUntil(s, ' ', ss.len+n);
   printlnCharSeq(ss); //-> String
@@ -27,8 +27,8 @@
   CharSeq ss2 = parseUntilW(s2, 0);
   printlnCharSeq(ss2);
   
-  int n2 = skipW(s2, ss2.len);
-  printf("%d\n", n2);
+  slen_t n2 = skipW(s2, ss2.len);
+  printf("%" PRI_SLEN "\n", n2);
 
 
   deinitSeq(ss2);
@@ -39,11 +39,11 @@
 
   CharSeq ss3 = parseUntil2(s2, ' ', 0);
 
-  printf("%d: ", ss3.len);printlnCharSeq(ss3);
+  printf("%" PRI_SLEN ": ", ss3.len);printlnCharSeq(ss3);
   
-  int n3 = skip(s3, ' ',ss3.len);
+  slen_t n3 = skip(s3, ' ',ss3.len);
 
-  printf("%d\n", n3);
+  printf("%" PRI_SLEN "\n", n3);
 
   deinitSeq(ss3);
   deinitSeq(s3);
@@ -54,23 +54,23 @@
 #include "strimpl.h"
 
 /// @returns the number of chars skipped
-int skip(const CharSeq s, char skipped, int start);
+slen_t skip(const CharSeq s, char skipped, slen_t start);
 
-typedef CharSeq (*ParseFunc)(const CharSeq, char, int);
+typedef CharSeq (*ParseFunc)(const CharSeq, char, slen_t);
 
 /** Parses a token and return it.
 */
-CharSeq parseUntil(const CharSeq s, char until, int start);
+CharSeq parseUntil(const CharSeq s, char until, slen_t start);
 
 /// skip space and punctuations except '-'
-int skipW(const CharSeq, int start);
+slen_t skipW(const CharSeq, slen_t start);
 
 /** parse until word border
   @note e.g. good-bye is considered as one word
 */
-CharSeq parseUntilW(const CharSeq s, int start);
+CharSeq parseUntilW(const CharSeq s, slen_t start);
 
 /// parse until two @p until characters are met
-CharSeq parseUntil2(const CharSeq s, char until, int start);
+CharSeq parseUntil2(const CharSeq s, char until, slen_t start);
 
 #endif //#ifndef _PARSEUTIL_H

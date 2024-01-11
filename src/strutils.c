@@ -32,19 +32,19 @@ CharSeq strAdd(const CharSeq s1, const CharSeq s2){
     return res;
 }
 
-CharSeq subStr(const CharSeq s, int first, int last){
+CharSeq subStr(const CharSeq s, slen_t first, slen_t last){
     if(last>s.len-1) last = s.len-1;
     CharSeq res;
     initSeq(char, res);
 
-    for(int i=first; i<=last; i++){
+    for(slen_t i=first; i<=last; i++){
         addItem(res, uncheckedGetItem(s,i));
     }
 
     return res;
 
 }
-CharSeq subStrFrom(const CharSeq s, int start){
+CharSeq subStrFrom(const CharSeq s, slen_t start){
     return subStr(s, start, s.len-1);
 }
 
@@ -55,7 +55,7 @@ PairS split2(const CharSeq s, char sep){
      
     res.left = lft;
 
-    int n = skip(s, sep, lft.len);
+    slen_t n = skip(s, sep, lft.len);
 
     res.right = subStrFrom(s, lft.len+n);
 
@@ -71,11 +71,11 @@ static char QuoM = '"'; // Quotation mark
  \retval -1 if quotation mark is not matched (no ending mark is found)
  \retval 0 if @p s is empty
 */
-int stripStr(CharSeq*p, const CharSeq s, int start, bool rightUntilEnd){
+slen_t stripStr(CharSeq*p, const CharSeq s, slen_t start, bool rightUntilEnd){
     if(s.len==0)
         return 0;
 
-    int n=0;    
+    slen_t n=0;
     CharSeq res;
     if(getItem(s,start)==QuoM){
         n++;
@@ -99,7 +99,7 @@ int stripStr(CharSeq*p, const CharSeq s, int start, bool rightUntilEnd){
 PairS splitQuo2(const CharSeq s, char sep){
     PairS res;
 
-    int n, pos; // avoid c++'s crosses initialization of ...
+    slen_t n, pos; // avoid c++'s crosses initialization of ...
     if(s.len==0) goto RetEmpty;
 
     // then len>=1

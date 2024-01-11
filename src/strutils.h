@@ -96,11 +96,11 @@ PairS splitQuo2(const CharSeq s, char sep);
 CharSeq strAdd(const CharSeq s1, const CharSeq s2);
 
 /**sub-string at [first,last]*/
-CharSeq subStr(const CharSeq s, int first, int last);
+CharSeq subStr(const CharSeq s, slen_t first, slen_t last);
 
 /// string slice starting at @p start
 /// @returns a new CharSeq
-CharSeq subStrFrom(const CharSeq s, int start);
+CharSeq subStrFrom(const CharSeq s, slen_t start);
 
 /// parse @p s as an intergar
 /// @param s 

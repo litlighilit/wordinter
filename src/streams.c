@@ -3,7 +3,7 @@
 
 #define RETnextWith(ps, untilProc, skipProc) do{\
     CharSeq res;\
-    int n=skipProc;\
+    slen_t n=skipProc;\
     ps->idx += n;\
     res = untilProc;\
     \
