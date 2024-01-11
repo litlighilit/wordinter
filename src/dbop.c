@@ -67,6 +67,30 @@ bool queryAll(const Interpreter interp, const char* word, bool ignoreCase){
     return hasPos;
 }
 
+typedef struct{
+    const CharSeq res;
+    bool outOfIndex;
+} DPres;
+
+DPres getPara(const Interpreter interp, const CharSeq fileCont, size_t para){
+    StrStream pstream = toParaStream(fileCont);
+
+    CharSeq Para;
+
+    size_t i=PARAM_START;
+    
+    while(1){
+        CharSeq seq = next_para(pstream, interp.multiLinePara);
+        if(seq.len==0)return (DPres){Para,true};
+        if(i==para){
+            Para = seq;
+            break;
+        }
+        i++;
+        deinitSeq(seq);
+    }
+    return (DPres){Para,false};
+}
 
 #define checkFname(rec, fname) ( strcmp((rec).fname, fname) == 0 )
 
@@ -78,30 +102,15 @@ size_t countWordOf(const Interpreter interp, slen_t fileOrd, size_t para){
     Rec rec = uncheckedGetItem(rs, fileIdx);
     CharSeq fileCont = getData(rec);
 
-    StrStream pstream = toParaStream(fileCont);
+    DPres dpr = getPara(interp, fileCont, para);
+    if(dpr.outOfIndex) return IndexErr;
 
-    CharSeq Para;
-
-    size_t i=PARAM_START;
-    
-    while(1){
-        CharSeq seq = next_para(pstream, interp.multiLinePara);
-        if(seq.len==0)goto RangeErr;
-        if(i==para){
-            Para = seq;
-            break;
-        }
-        i++;
-        deinitSeq(seq);
-    }
-
+    CharSeq Para = dpr.res;
     size_t cnt = 0;
     doInPara(Para, cnt++);
     deinitSeq(Para);
     return cnt;
 
-RangeErr:
-    return IndexErr;
 }
 
 size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCase){
@@ -114,6 +123,14 @@ size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCas
     return cnt;
 }
 
+
+void printHeader(const Rec rec, slen_t idx){
+    int preLen = printf("%" PRI_SLEN ". ", idx);
+    printf("%s\n", rec.fname);
+    for(size_t _=0; _<preLen+strlen(rec.fname); _++) putchar('=');
+    putchar('\n');
+
+}
 
 size_t listFile(const Interpreter interp, slen_t fileOrd){
     size_t res=0;
@@ -128,16 +145,37 @@ size_t listFile(const Interpreter interp, slen_t fileOrd){
         }
     }else{
         if(fileOrd<1||fileOrd>rs.len) return 0;
-        size_t fileIdx = fileOrd-1;
+        slen_t fileIdx = fileOrd-1;
         Rec rec=uncheckedGetItem(rs, fileIdx);
 
-
-        printf("%s\n", rec.fname);
-        for(size_t _=0; _<strlen(rec.fname); _++) putchar('=');
-        putchar('\n');
+        printHeader(rec, fileIdx);
         printlnCharSeq(rec.data);
         res++;
 
     }
     return res;
 }
+
+enum lfpIndexErr listFilePara(const Interpreter interp, slen_t fileOrd, size_t para){
+    size_t res=0;
+    RecSeq rs = interp.db;
+    if(fileOrd<1||fileOrd>rs.len) return lfpieFile;
+    
+    size_t fileIdx = fileOrd-1;
+    Rec rec=uncheckedGetItem(rs, fileIdx);
+
+    CharSeq fileCont = rec.data;
+
+    DPres dpr = getPara(interp, fileCont, para);
+
+    if(dpr.outOfIndex) return lfpiePara;
+
+    printHeader(rec, fileIdx);
+    printlnCharSeq(dpr.res);
+
+    deinitSeq(dpr.res);
+
+    return lfpieOk;
+
+}
+

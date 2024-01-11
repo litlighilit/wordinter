@@ -41,7 +41,7 @@ const char* HELP[N_CMD] = {
      QUE" [" ICASE_FLAG "] WORD            " SEP "query and print all positions of the word WORD." ICASE_HELP
     ,CNT" FNAME|ORD N_PARA  "    SEP "count the number of words in N_PARA paragraph of file FNAME or file indexed in ORD"
     ,FCY" [" ICASE_FLAG "] WORD            " SEP "print the frequency of the word WORD." ICASE_HELP
-    ,LST" [FNAME|ORD]          " SEP "print content of FNAME or indexed in ORD or print all filenames"
+    ,LST" [FNAME|ORD]  [PARA]  " SEP "print content of FNAME or indexed in ORD or print all filenames, if PARA is given, only list that paragrgh"
     ,SRC" DIR|FPATH            " SEP "load all files in DIR or only file"
     ,MOD" [MODE]               " SEP "switch between or switch mode to " ReprModes
     ,HLP" [CMD]                " SEP "print all help or for a certain CMD"
@@ -170,6 +170,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     size_t cnt;
     bool succParseInt;
     PairS si;
+    enum lfpIndexErr lfpErr;
     #define check_arg(nCmd) do{\
         if(args.len==0){\
             warn("missing arg! Here is help:");\
@@ -221,27 +222,25 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         isArgOrd = _ordFileArg(&fileArgOrd, si.left, pinterp->db, &fnameArg);
 
         if(fileArgOrd==-1) goto FileNotFound;
+        else{
+            size_t nPara;
+            succParseInt = parseSize(si.right, &nPara);
+            if(!succParseInt){
+                warn("bad positive int input! You shall input:"); priHelp(1);
+                
+                ret = FTypeErr;
+                goto Clean;
+            }
 
-        {
-        size_t nPara;
-        succParseInt = parseSize(si.right, &nPara);
-        if(!succParseInt){
-            warn("bad positive int input! You shall input:"); priHelp(1);
-            
-            ret = FTypeErr;
-            goto Clean;
+            cnt = countWordOf(*pinterp, fileArgOrd, nPara);
+            if(cnt==FileNotFoundErr){
+                FileNotFound:
+                if(isArgOrd) warn("no file indexed in %" PRI_SLEN " found", fileArgOrd);
+                else warn("no file named '%s' found", fnameArg);
+            }else if(cnt==IndexErr) warn("The number %zu is out of range", nPara);
+            else printCnt(cnt);
         }
 
-        cnt = countWordOf(*pinterp, fileArgOrd, nPara);
-        if(cnt==FileNotFoundErr){
-            FileNotFound:
-            if(isArgOrd) warn("no file indexed in %" PRI_SLEN " found", fileArgOrd);
-            else warn("no file named '%s' found", fnameArg);
-        }else if(cnt==IndexErr) warn("The number %zu is out of range", nPara);
-        else printCnt(cnt);
-
-        
-        }
         break;
     case 2:
         {
@@ -259,12 +258,28 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         else{
             isArgOrd = _ordFileArg(&fileArgOrd, args, pinterp->db, &fnameArg);
             if(fileArgOrd==-1) goto FileNotFound;
-        }
-        {
-        size_t nFiles = listFile(*pinterp, fileArgOrd);
 
-        if(nFiles==0) goto FileNotFound;
-        else info("%zu files listed", nFiles);
+            si = splitQuo2(args, ' ');
+
+            if(si.right.len==0){
+                size_t nFiles = listFile(*pinterp, fileArgOrd);
+
+                if(nFiles==0) goto FileNotFound;
+                else info("%zu files listed", nFiles);
+            }else{
+                // use cnt as `para` to avoid defining a new symbol
+                //  which will be complained by c++ compiler
+                succParseInt = parseSize(si.right, &cnt);
+                if(!succParseInt){
+                    warn("bad positive int input! You shall input:");
+                    priHelp(3);
+                }else{
+                    lfpErr = listFilePara(*pinterp, fileArgOrd, cnt);
+                    if(lfpErr==lfpiePara) warn("out of paragraph range");
+                    else if (lfpErr==lfpieFile) goto FileNotFound;
+                    else info("Para %zu listed", cnt);
+                }
+            }
         }
         break;
     case 4:
