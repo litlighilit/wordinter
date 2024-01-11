@@ -10,7 +10,7 @@ char* newCStr(const char* s){
     return res;
 }
 
-char* newSubCStr(const char* s, int n){
+char* newSubCStr(const char* s, size_t n){
     size_t len = n;
     size_t slen = strlen(s);
     if(slen<n) len=slen;
@@ -56,7 +56,7 @@ char* joinPath(const char* dir, const char*fname){
 }
 
 const char* basenameRef( const char* path){
-    for(int i=strlen(path)-1; i>-1; i--){
+    for(size_t i=strlen(path)-1; i>-1; i--){
         if(path[i]==UNIX_OS_SEP || path[i]==WIN_OS_SEP) return path+i+1;
     }
     return path;

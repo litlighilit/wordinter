@@ -49,27 +49,27 @@ const char* HELP[N_CMD] = {
     ,QUI"|exit                 " SEP "quit"
 };
 
-bool priHelp(int n){
-    if(!(-1<n && n<N_CMD)) return false;
+bool priHelp(size_t n){
+    if(!(n<N_CMD)) return false;
     
     msgl(HELP[n]);
     return true;
 }
 
 #define N_COL_LEN 10 // shall bigger than the max len of any of CMD
-bool priAlias(int n){
-    if(!(-1<n && n<N_CMD)) return false;
+bool priAlias(size_t n){
+    if(!(n<N_CMD)) return false;
     
-    for(int j=0; j<N_ALIAS; j++)
+    for(size_t j=0; j<N_ALIAS; j++)
         msg("%-*s ", N_COL_LEN, CMD[n][j]);
     msg("\n");
     return true;
 }
 
-int cmdOrd(const CharSeq cmd){
-    int res = -1;
-    for(int i=0; i<N_CMD; i++){
-        for(int j=0; j<N_ALIAS; j++){
+size_t cmdOrd(const CharSeq cmd){
+    size_t res = -1;
+    for(size_t i=0; i<N_CMD; i++){
+        for(size_t j=0; j<N_ALIAS; j++){
             if(seqEqStr(cmd, CMD[i][j])){
                 res = i;
                 goto Ret;
@@ -82,7 +82,7 @@ Ret:
 }
 
 bool priHelpOf(const CharSeq dest){
-    int ord = cmdOrd(dest);
+    size_t ord = cmdOrd(dest);
     const char*help;
     bool found = ord==-1;
     if(found){
@@ -94,8 +94,8 @@ bool priHelpOf(const CharSeq dest){
     return found;
 }
 
-void printCnt(int cnt){msgl("all word count: %d", cnt);}
-void printFcy(int fre){msgl("word frequency: %d", fre);}
+void printCnt(size_t cnt){msgl("all word count: %zu", cnt);}
+void printFcy(size_t fre){msgl("word frequency: %zu", fre);}
 
 void printPs(){msg(">> ");}
 
@@ -133,19 +133,19 @@ void enterRepl(Interpreter* pinterp){
 }
 
 /// 
-/// @param[out] ordp will be set -1 if filename is not found
+/// @param[out] ordp will be set ((slen_t)-1) if filename is not found
 /// @param[in] rs
 /// @param[out] filenamep will be set `NULL` if @p arg is alreadly a order
 /// @returns whether @p arg is a file order alreadly
-bool _ordFileArg(int*ordp, const CharSeq arg, RecSeq rs, char** const filenamep){
-    int fileOrd=-1;
-    bool isOrd = parseInt(arg, &fileOrd);
+bool _ordFileArg(slen_t*ordp, const CharSeq arg, RecSeq rs, char** const filenamep){
+    slen_t fileOrd=-1;
+    bool isOrd = parseSlenT(arg, &fileOrd);
 
     char*fname=NULL;
     if(!isOrd){
         fname = cstr(arg);
         #define checkFname(rec, _fname) (strcmp(rec.fname, _fname)==0)
-        int fileIdx = -1;
+        slen_t fileIdx = -1;
         findIndex(fileIdx, rs, fname, checkFname);
         if(fileIdx==-1) fileOrd=-1;
         else fileOrd = fileIdx + 1;
@@ -162,12 +162,12 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     PairS pair = splitQuo2(cmd, ' ');
     CharSeq key = pair.left;
     CharSeq args = pair.right;
-    int ord = cmdOrd(key);
+    size_t ord = cmdOrd(key);
 
     char* fnameArg=NULL;
-    int fileArgOrd;
+    slen_t fileArgOrd;
     bool isArgOrd;
-    int cnt;
+    size_t cnt;
     bool succParseInt;
     PairS si;
     #define check_arg(nCmd) do{\
@@ -223,10 +223,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         if(fileArgOrd==-1) goto FileNotFound;
 
         {
-        int nPara;
-        succParseInt = parseInt(si.right, &nPara);
+        size_t nPara;
+        succParseInt = parseSize(si.right, &nPara);
         if(!succParseInt){
-            warn("bad int input! You shall input:"); priHelp(1);
+            warn("bad positive int input! You shall input:"); priHelp(1);
             
             ret = FTypeErr;
             goto Clean;
@@ -235,9 +235,9 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         cnt = countWordOf(*pinterp, fileArgOrd, nPara);
         if(cnt==FileNotFoundErr){
             FileNotFound:
-            if(isArgOrd) warn("no file indexed in %d found", fileArgOrd);
+            if(isArgOrd) warn("no file indexed in %" PRI_SLEN " found", fileArgOrd);
             else warn("no file named '%s' found", fnameArg);
-        }else if(cnt==IndexErr) warn("The number %d is out of range", nPara);
+        }else if(cnt==IndexErr) warn("The number %zu is out of range", nPara);
         else printCnt(cnt);
 
         
@@ -249,7 +249,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         char* c_word4fcy;
         bool ignoreCase = false;
         parse_flag(c_word4fcy, ignoreCase, ICASE_FLAG);
-        int fcy = countFrequency(*pinterp, c_word4fcy, ignoreCase);
+        size_t fcy = countFrequency(*pinterp, c_word4fcy, ignoreCase);
         printFcy(fcy);
         free(c_word4fcy);
         }
@@ -261,10 +261,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
             if(fileArgOrd==-1) goto FileNotFound;
         }
         {
-        int nFiles = listFile(*pinterp, fileArgOrd);
+        size_t nFiles = listFile(*pinterp, fileArgOrd);
 
         if(nFiles==0) goto FileNotFound;
-        else info("%d files listed", nFiles);
+        else info("%zu files listed", nFiles);
         }
         break;
     case 4:
@@ -297,9 +297,9 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
     #define PRI(dest) do{\
         if(args.len==0){\
             msgl("all %s:", #dest);\
-            for(int i=0; i<N_CMD; i++) pri##dest(i);\
+            for(size_t i=0; i<N_CMD; i++) pri##dest(i);\
         }else{\
-            int _destOrd = cmdOrd(args);\
+            size_t _destOrd = cmdOrd(args);\
             if(_destOrd==-1) warn("unknow %s", #dest);\
             else pri##dest(_destOrd);\
         }\

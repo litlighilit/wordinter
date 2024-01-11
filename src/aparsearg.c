@@ -4,12 +4,12 @@
 #include <stdarg.h>
 #include "aparsearg.h"
 
-#define loopMapLen(var) for(int var=0; var<MapLen; var++)
+#define loopMapLen(var) for(size_t var=0; var<MapLen; var++)
 
 #define IND "  " //indent
 
 #define strAppendp(seq, p) do{\
-    for(int i=0; i<strlen(p); i++){\
+    for(size_t i=0; i<strlen(p); i++){\
       addItem((seq), p[i]);\
     }\
 }while(0)
@@ -54,7 +54,7 @@ void freeArgParser(ArgParser parser){
 ParseArgRes newParseArgRes(){
     ParseArgRes res = {0};
     initSeq(CharSeq, res.args);
-    for(int i=0; i<MapLen; i++) initSeq(CharSeq, res.keyListvals[i]);
+    for(size_t i=0; i<MapLen; i++) initSeq(CharSeq, res.keyListvals[i]);
     res.err=NULL;
     return res;
 }
@@ -65,7 +65,7 @@ void freeParseArgRes(ParseArgRes res){
         deinitSeq(getItem(res.args, i));
     }
     deinitSeq(res.args);
-    for(int i=0; i<MapLen; i++){
+    for(size_t i=0; i<MapLen; i++){
         forIndex(j, res.keyListvals[i])
             deinitSeq(getItem(res.keyListvals[i], j));
         deinitSeq(res.keyListvals[i]);
@@ -76,7 +76,7 @@ void addArgMap(ArgParser parser, char shortOpt, const char* longOpt){
     assert( checkOption(shortOpt) );
 
     const char** map = parser->map;
-    int nhash = _MapOrd(shortOpt);
+    size_t nhash = _MapOrd(shortOpt);
     assert(map[nhash]==NULL); // avoid overwrite
 
     const char*long_;

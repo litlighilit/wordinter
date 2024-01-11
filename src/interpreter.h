@@ -61,14 +61,14 @@ void enterRepl(Interpreter* interp);
 /// @brief print help of @p n cmd
 /// @param n order of cmd to print
 /// @returns if success (whether @p n is in valid range)
-bool priHelp(int n);
+bool priHelp(size_t n);
 
 
 /// @brief print alias of @p n cmd
 /// @param n order of cmd to print
 /// @returns if success (whether @p n is in valid range)
-bool priAlias(int n);
+bool priAlias(size_t n);
 
 /// get order of @p cmd
-int cmdOrd(const CharSeq cmd);
+size_t cmdOrd(const CharSeq cmd);
 #endif //#ifndef _INTERPRETER_H

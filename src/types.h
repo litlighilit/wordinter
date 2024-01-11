@@ -14,13 +14,13 @@
 /// Position of a word
 typedef struct{
     char* fname; ///< file name
-    int para; ///< paragraph index
-    int idx; ///< word index of one paragragh
+    size_t para; ///< paragraph index
+    size_t idx; ///< word index of one paragragh
 } Pos;
 
 typedef Seq(Pos) PosSeq;
 
-#define printPos(pos) printf("in file %s at paragraph %d in the word index %d\n"\
+#define printPos(pos) printf("in file %s at paragraph %zu in the word index %zu\n"\
     , pos.fname, pos.para, pos.idx);
 
 

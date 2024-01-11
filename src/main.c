@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
 
     ArgParser parser = newArgParser(argc, argv, NULL);
     
-    for(int i=0; i<sizeof(Notes)/sizeof(Notes[0]); i++)
+    for(size_t i=0; i<sizeof(Notes)/sizeof(Notes[0]); i++)
         addNote(parser, Notes[i]);
 
     enInfo(parser, INFO);

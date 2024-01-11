@@ -145,3 +145,16 @@ bool parseInt(const CharSeq s, int* res){
     free(cs);
     return n==1;
 }
+
+bool parseSize(const CharSeq s, size_t*res){
+    char*cs=cstr(s);
+    int n = sscanf(cs, "%zu", res);
+    free(cs);
+    return n==1;
+}
+bool parseSlenT(const CharSeq s, slen_t*res){
+    char*cs=cstr(s);
+    int n = sscanf(cs, "%" PRI_SLEN , res);
+    free(cs);
+    return n==1;
+}

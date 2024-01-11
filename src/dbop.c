@@ -38,7 +38,7 @@
         \
         StrStream pstream = toParaStream(s);\
         \
-        for(int iPara=PARAM_START; ; iPara++){\
+        for(size_t iPara=PARAM_START; ; iPara++){\
             CharSeq para = next_para(pstream, interp.multiLinePara);\
             if(para.len==0)break;\
             pos.para=iPara;\
@@ -70,11 +70,11 @@ bool queryAll(const Interpreter interp, const char* word, bool ignoreCase){
 
 #define checkFname(rec, fname) ( strcmp((rec).fname, fname) == 0 )
 
-int countWordOf(const Interpreter interp, int fileOrd, int para){
+size_t countWordOf(const Interpreter interp, slen_t fileOrd, size_t para){
     
     RecSeq rs = interp.db;
     if(fileOrd<1 || fileOrd>rs.len) return FileNotFoundErr;
-    int fileIdx = fileOrd-1;
+    slen_t fileIdx = fileOrd-1;
     Rec rec = uncheckedGetItem(rs, fileIdx);
     CharSeq fileCont = getData(rec);
 
@@ -82,7 +82,7 @@ int countWordOf(const Interpreter interp, int fileOrd, int para){
 
     CharSeq Para;
 
-    int i=PARAM_START;
+    size_t i=PARAM_START;
     
     while(1){
         CharSeq seq = next_para(pstream, interp.multiLinePara);
@@ -97,7 +97,7 @@ int countWordOf(const Interpreter interp, int fileOrd, int para){
 
 CountWord:
     ;
-    {int cnt = 0;
+    {size_t cnt = 0;
     doInPara(Para, cnt++);
     deinitSeq(Para);
     return cnt;
@@ -107,36 +107,36 @@ RangeErr:
     return IndexErr;
 }
 
-int countFrequency(const Interpreter interp, const char* word, bool ignoreCase){
+size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCase){
     Cmper cmp;
     if(ignoreCase) cmp = seqIEqStr;
     else cmp = seqEqStr;
 
-    int cnt=0;
+    size_t cnt=0;
     filterDo(interp, cmp, word, cnt++);
     return cnt;
 }
 
 
-int listFile(const Interpreter interp, int fileOrd){
-    int res=0;
+size_t listFile(const Interpreter interp, size_t fileOrd){
+    size_t res=0;
     RecSeq rs = interp.db;
     if(fileOrd==0){
         forIndex(idx, rs){
             Rec rec = getItem(rs, idx);
-            int ord = idx+1;
-            printf("%d. ", ord);
+            size_t ord = idx+1;
+            printf("%zu. ", ord);
             puts(rec.fname);
             res++;
         }
     }else{
         if(fileOrd<1||fileOrd>rs.len) return 0;
-        int fileIdx = fileOrd-1;
+        size_t fileIdx = fileOrd-1;
         Rec rec=uncheckedGetItem(rs, fileIdx);
 
 
         printf("%s\n", rec.fname);
-        for(int _=0; _<strlen(rec.fname); _++) putchar('=');
+        for(size_t _=0; _<strlen(rec.fname); _++) putchar('=');
         putchar('\n');
         printlnCharSeq(rec.data);
         res++;

@@ -30,7 +30,7 @@ const char* basenameRef(const char* path);
 char* newCStr(const char* s);
 
 /// @returns a new c-string
-char* newSubCStr(const char* s, int n);
+char* newSubCStr(const char* s, size_t n);
 
 /// cancatenate two string.
 /// @returns a new c-string

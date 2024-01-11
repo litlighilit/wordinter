@@ -108,6 +108,15 @@ CharSeq subStrFrom(const CharSeq s, slen_t start);
 /// @returns whether is successful
 bool parseInt(const CharSeq s, int*res);
 
+/// parse @p s as a `size_t` intergar (positive)
+/// @param s 
+/// @param[in] res a pointer to store result `size_t` interger, untouched if not successful
+/// @returns whether is successful
+bool parseSize(const CharSeq s, size_t*res);
+
+/// parse a `slen_t`
+bool parseSlenT(const CharSeq s, slen_t*res);
+
 /** like seqEqStr() but ignore case*/
 bool seqIEqStr(const CharSeq seq, const char* s);
 

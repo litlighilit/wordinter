@@ -26,14 +26,14 @@
   char* word = "is";
   queryAll(interp, word);
 
-  int cnt = countWordOf(interp, "f1", 2);
+  size_t cnt = countWordOf(interp, "f1", 2);
 
-  printf("%d\n", cnt);
+  printf("%zu\n", cnt);
 
 
-  int fre = countFrequency(interp, word);
+  size_t fre = countFrequency(interp, word);
 
-  printf("%d\n", fre);
+  printf("%zu\n", fre);
 
 
 */
@@ -61,10 +61,10 @@ bool queryAll(const Interpreter interp, const char* word, bool ignoreCase);
  @retval @ref FileNotFoundErr if no record with @p fileOrd can be found(i.e. out of range)
  @retval @ref IndexErr if @p para is over range
 */ 
-int countWordOf(const Interpreter interp, int fileOrd, int para);
+size_t countWordOf(const Interpreter interp, slen_t fileOrd, size_t para);
 
 /// count the frequency of @p word
-int countFrequency(const Interpreter interp, const char* word, bool ignoreCase);
+size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCase);
 
 /**
  list:
@@ -76,5 +76,5 @@ int countFrequency(const Interpreter interp, const char* word, bool ignoreCase);
  @returns the number of listed items
  @retval 0 if @p fileOrd out of range
 */
-int listFile(const Interpreter interp, int fileOrd);
+size_t listFile(const Interpreter interp, size_t fileOrd);
 #endif //#inndef _DBOP_H
