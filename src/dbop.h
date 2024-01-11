@@ -76,5 +76,5 @@ size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCas
  @returns the number of listed items
  @retval 0 if @p fileOrd out of range
 */
-size_t listFile(const Interpreter interp, size_t fileOrd);
+size_t listFile(const Interpreter interp, slen_t fileOrd);
 #endif //#inndef _DBOP_H
