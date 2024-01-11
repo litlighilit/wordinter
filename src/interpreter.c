@@ -229,6 +229,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
                 warn("bad positive int input! You shall input:"); priHelp(1);
                 
                 ret = FTypeErr;
+                freePairS(si);
                 goto Clean;
             }
 
@@ -240,6 +241,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
             }else if(cnt==IndexErr) warn("The number %zu is out of range", nPara);
             else printCnt(cnt);
         }
+        freePairS(si);
 
         break;
     case 2:
@@ -280,6 +282,7 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
                     else info("Para %zu listed", cnt);
                 }
             }
+            freePairS(si);
         }
         break;
     case 4:
