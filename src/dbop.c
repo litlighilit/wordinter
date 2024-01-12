@@ -157,7 +157,6 @@ size_t listFile(const Interpreter interp, slen_t fileOrd){
 }
 
 enum lfpIndexErr listFilePara(const Interpreter interp, slen_t fileOrd, size_t para){
-    size_t res=0;
     RecSeq rs = interp.db;
     if(fileOrd<1||fileOrd>rs.len) return lfpieFile;
     

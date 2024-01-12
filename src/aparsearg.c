@@ -436,7 +436,6 @@ Usages newUsages(const char* nullEnded[]){
     Usages res={.isNotEmpty=true};
     initSeq(CharSeq, res.seq);
     char*now;
-    CharSeq nows;
     for(int i=0; (now=(char*)nullEnded[i])!=NULL; i++){
         addUsage(&res, now);
     }
