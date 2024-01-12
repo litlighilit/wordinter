@@ -6,7 +6,7 @@
 #include <windows.h>
 bool vted = false;
 DWORD cmsg_pre_dwMode = 0; // used to recover
-void _cmsg_recover_console_mode(){
+void _cmsg_recover_console_mode(void){
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hOut == INVALID_HANDLE_VALUE) return;
     SetConsoleMode(hOut, cmsg_pre_dwMode);

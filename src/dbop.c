@@ -81,7 +81,7 @@ DPres getPara(const Interpreter interp, const CharSeq fileCont, size_t para){
     
     while(1){
         CharSeq seq = next_para(pstream, interp.multiLinePara);
-        if(seq.len==0)return (DPres){Para,true};
+        if(seq.len==0)return (DPres){Para,true}; // if `-Wall`, here may warn `'Para' may be used uninitialized`. fine
         if(i==para){
             Para = seq;
             break;
@@ -119,7 +119,7 @@ size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCas
     else cmp = seqEqStr;
 
     size_t cnt=0;
-    filterDo(interp, cmp, word, cnt++);
+    filterDo(interp, cmp, word, cnt++); // if `-Wall`, here will warn `variable 'pos' set but not used`. fine
     return cnt;
 }
 

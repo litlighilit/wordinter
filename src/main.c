@@ -10,7 +10,7 @@
 
 int main(int argc, char* argv[]){
 
-    cmsgWarnOnFailCfg(clOnIfEnvAllow);
+    (void)cmsgWarnOnFailCfg(clOnIfEnvAllow); // add (void) to avoid warning if `-Wall`
     
     #define K(arr) arr[1] // get "-x"'s 'x'
     const char singLineP = K(singleLineParaFlag);

@@ -38,7 +38,7 @@ bool pushFile(RecSeq*p, const char* fpath){
 }
 
 
-void _NoopWithCharp(const char*_){}
+void _NoopWithCharp(const char*_nouse){}
 
 // skip . and ..
 bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
@@ -156,7 +156,7 @@ bool dirExists(const char* dir){
 #include <sys/stat.h>
 bool dirExists(const char* dir){
     struct stat st;
-    bool res = stat(dir, &st) >= 0 & S_ISDIR(st.st_mode);
+    bool res = stat(dir, &st) >= 0 && S_ISDIR(st.st_mode);
 	return res;
 }
 #endif // #ifdef _MSC_VER
