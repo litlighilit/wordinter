@@ -265,25 +265,25 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
             if(fileArgOrd==-1) _PriNoFileFound();
 
             si = splitQuo2(args, ' ');
+        }
 
-            if(si.right.len==0){
-                size_t nFiles = listFile(*pinterp, fileArgOrd);
+        if(fileArgOrd==0||si.right.len==0){
+            size_t nFiles = listFile(*pinterp, fileArgOrd);
 
-                if(nFiles==0)_PriNoFileFound();
-                else info("%zu files listed", nFiles);
+            if(nFiles==0)_PriNoFileFound();
+            else info("%zu files listed", nFiles);
+        }else{
+            // use cnt as `para` to avoid defining a new symbol
+            //  which will be complained by c++ compiler
+            succParseInt = parseSize(si.right, &cnt);
+            if(!succParseInt){
+                warn("bad positive int input! You shall input:");
+                priHelp(3);
             }else{
-                // use cnt as `para` to avoid defining a new symbol
-                //  which will be complained by c++ compiler
-                succParseInt = parseSize(si.right, &cnt);
-                if(!succParseInt){
-                    warn("bad positive int input! You shall input:");
-                    priHelp(3);
-                }else{
-                    lfpErr = listFilePara(*pinterp, fileArgOrd, cnt);
-                    if(lfpErr==lfpiePara) warn("out of paragraph range");
-                    else if (lfpErr==lfpieFile)_PriNoFileFound();
-                    else info("Para %zu listed", cnt);
-                }
+                lfpErr = listFilePara(*pinterp, fileArgOrd, cnt);
+                if(lfpErr==lfpiePara) warn("out of paragraph range");
+                else if (lfpErr==lfpieFile)_PriNoFileFound();
+                else info("Para %zu listed", cnt);
             }
             freePairS(si);
         }
