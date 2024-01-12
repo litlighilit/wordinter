@@ -43,6 +43,7 @@ void _NoopWithCharp(const char*_nouse){}
 // skip . and ..
 bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
 #if in_MSVC
+#include <windows.h>
 #include <io.h>
 
 enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* filename)){
