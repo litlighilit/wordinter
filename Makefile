@@ -28,8 +28,8 @@ $(target):$(objs)
 	$(CC) $(CFLAGS) $+ -o $@
 
 
-$(objCache)/%.o:$(src)/%.c
-	$(to_obj) $(CFLAGS) $(incDir) $^ -o $@
+$(objCache)/%.o:$(src)/%.c $(src)/%.h
+	$(to_obj) $(CFLAGS) $(incDir) $< -o $@
 
 
 
