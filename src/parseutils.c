@@ -55,7 +55,8 @@ bool isWordBorder(char c){
      31<c&&c<'0' ||
     '9'<c&&c<'A' ||
     'Z'<c&&c<'a' ||
-    'z'<c);
+    'z'<c&&c<127 // 127 -> Delete op
+    );
 }
 
 slen_t skipW(const CharSeq s, slen_t start){
