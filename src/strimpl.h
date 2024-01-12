@@ -1,6 +1,10 @@
 
 #ifndef _STRIMPL_H
 #define _STRIMPL_H
+/**
+ @file strimpl.h
+ @brief string implementation
+ */
 
 /*doctest: include("<assert.h>")
   CharSeq s = charpToSeq("This is a String");

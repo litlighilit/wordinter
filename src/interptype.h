@@ -1,7 +1,10 @@
 
 #ifndef _INTERPTYPE_H
 #define _INTERPTYPE_H
-// interpreter type
+/**
+ @file interptype
+ @brief interpreter type
+ */
 
 #include "types.h"
 

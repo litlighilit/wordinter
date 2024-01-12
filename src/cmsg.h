@@ -3,6 +3,8 @@
 #define _CMSG_H
 /** @file cmsg.h
  
+  @brief colored message
+
   use ESC to en-color
 
   under Windows, call win-api to enable Virtual Terminal

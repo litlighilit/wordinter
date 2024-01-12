@@ -3,6 +3,7 @@
 #define _INTERPRETER_H
 /**
  @file interpreter.h
+ @brief for REPL
 */
 /*doctest:
   RecSeq seq;

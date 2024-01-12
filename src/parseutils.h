@@ -1,7 +1,10 @@
 
 #ifndef _PARSEUTIL_H
 #define _PARSEUTIL_H
-/// @file parseutils.h
+/**
+ @file parseutils.h
+ @brief parse utilities
+*/
 /*doctest:
 
 // # for one certain char

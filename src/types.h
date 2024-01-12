@@ -3,6 +3,10 @@
 #define _TYPES_H
 
 //[header-only]
+/**
+ @file types.h
+ @brief types for storing data
+*/
 /*doctest:
   Pos pos = {"fname", 3, 2};
   printPos(pos);
