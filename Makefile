@@ -7,6 +7,7 @@ src=src
 headerDir=src
 #build dir
 build=build
+CFLAGS=-std=c99
 target=$(build)/$(target_fn)
 
 objCache=$(build)/objs
