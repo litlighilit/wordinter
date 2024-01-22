@@ -57,10 +57,9 @@ enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* f
     if(fallback==NULL) fallback=_NoopWithCharp;
 
     enum DirScanStat res = dsSucc;
-    int k;
-    do {
+    for(int k=0; k==0; k=_findnext(handle, &fileInfo)){
         char*fname = fileInfo.name;
-        if(shallSkip(fname)) goto Next;
+        if(shallSkip(fname)) continue;
 
         char* path = joinPath(dir, fname);
         bool succ = pushFile(p, path);
@@ -75,8 +74,7 @@ enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* f
         
         Next:
         free(path);
-        k = _findnext(handle, &fileInfo);
-    } while (k==0);
+     }
      
     _findclose(handle);
     free((char*)pattern); // discard const
