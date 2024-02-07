@@ -123,9 +123,9 @@ size_t countFrequency(const Interpreter interp, const char* word, bool ignoreCas
     return cnt;
 }
 
-
-void printHeader(const Rec rec, slen_t idx){
-    int preLen = printf("%" PRI_SLEN ". ", idx);
+/// print header of file in the @p idx with its ord( @p idx + 1 ) and name 
+static void printHeader(const Rec rec, slen_t idx){
+    int preLen = printf("%" PRI_SLEN ". ", idx+1);
     printf("%s\n", rec.fname);
     for(size_t _=0; _<preLen+strlen(rec.fname); _++) putchar('=');
     putchar('\n');
