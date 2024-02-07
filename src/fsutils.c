@@ -24,7 +24,7 @@ CharSeq readAll(FILE* f){
 
 bool pushFile(RecSeq*p, const char* fpath){
     bool res=true;
-    FILE* f=fopen(fpath, "r");
+    FILE* f=fopen(fpath, "rb");
     if(f==NULL) return false;
     CharSeq content = readAll(f);
     fclose(f);
