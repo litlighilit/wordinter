@@ -15,6 +15,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+// suppress warning of "format string is not a string literal ..."
+//  as we just use ANSI control sequence as printf's format string, which is fine
+#pragma clang diagnostic ignored "-Wformat-security"
+
 /// environment variable to disable color
 #define NO_COLOR_ENV "NO_COLOR"
 
