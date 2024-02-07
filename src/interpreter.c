@@ -137,7 +137,7 @@ void enterRepl(Interpreter* pinterp){
 /// @param[in] rs
 /// @param[out] filenamep will be set `NULL` if @p arg is alreadly a order
 /// @returns whether @p arg is a file order alreadly
-bool _ordFileArg(slen_t*ordp, const CharSeq arg, RecSeq rs, char** const filenamep){
+static bool _ordFileArg(slen_t*ordp, const CharSeq arg, RecSeq rs, char** const filenamep){
     slen_t fileOrd=-1;
     bool isOrd = parseSlenT(arg, &fileOrd);
 

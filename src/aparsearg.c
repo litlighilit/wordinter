@@ -14,7 +14,7 @@
     }\
 }while(0)
 
-bool AlwaysGoOn(const char* _){return true;}
+static bool AlwaysGoOn(const char* _){return true;}
 
 ArgParser newArgParser(int argc, char* const argv[],
      const char* help ){
@@ -331,22 +331,22 @@ void printAllArgsHelp(ArgParser parser){
     
 }
 
-static const char* helpWanted[] = {
+const char* helpWanted[] = {
      "-h"
     ,"-help"
     ,"--help"
     ,"-?"
     ,"/?"
 };
-static const char* versionWanted[] = {
+const char* versionWanted[] = {
      "-v"
     ,"-version"
     ,"--version"
 };
 
 #define literalArrLen(arr) (sizeof(arr)/sizeof(arr[0]))
-static const size_t lenHelpWanted = literalArrLen(helpWanted);
-static const size_t lenVersionWanted = literalArrLen(versionWanted);
+const size_t lenHelpWanted = literalArrLen(helpWanted);
+const size_t lenVersionWanted = literalArrLen(versionWanted);
 
 
 

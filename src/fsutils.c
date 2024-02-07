@@ -37,7 +37,7 @@ bool pushFile(RecSeq*p, const char* fpath){
 }
 
 
-void _NoopWithCharp(const char*_nouse){}
+static void _NoopWithCharp(const char*_nouse){}
 
 // skip . and ..
 bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
