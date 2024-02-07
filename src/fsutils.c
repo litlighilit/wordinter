@@ -62,17 +62,16 @@ enum DirScanStat pushInDir(RecSeq*p, const char*dir, void fallback(const char* f
         if(shallSkip(fname)) continue;
 
         char* path = joinPath(dir, fname);
-        bool succ = pushFile(p, path);
+        if(dirExists(path)); // if is dir, do nothing
+        else{
+            bool succ = pushFile(p, path);
 
-        if(!succ){
-            bool isDir = dirExists(path);
-
-            if(isDir) goto Next;
-            res=dsItemSkipped;
-            fallback(fname);
+            if(!succ){
+                res=dsItemSkipped;
+                fallback(fname);
+            }
         }
         
-        Next:
         free(path);
      }
      
@@ -101,17 +100,16 @@ enum DirScanStat pushInDir(RecSeq*p, const char* dir, void fallback(const char* 
         if(shallSkip(fname)) continue;
 
         char* path = joinPath(dir, fname);
-        bool succ = pushFile(p, path);
+        if(dirExists(path)); // if is dir, do nothing
+        else{
+            bool succ = pushFile(p, path);
 
-        if(!succ){
-            bool isDir = dirExists(path);
-
-            if(isDir) goto Next;
-            res=dsItemSkipped;
-            fallback(fname);
+            if(!succ){
+                res=dsItemSkipped;
+                fallback(fname);
+            }
         }
 
-        Next:
         free(path);
     }
     closedir(dp);
