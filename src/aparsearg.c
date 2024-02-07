@@ -153,9 +153,9 @@ ParseArgRes parseArgs(ArgParser parser){
                     goto SelectKeyval;
                 }
                 longOpt = newCStr(opt);
-                sht=-1;
+                sht=0;
                 _MapSearchKey(sht, parser->map, opt);
-                if(sht==-1){
+                if(sht==0){
                     res.err=catCStr("unknown long option: ",longOpt);
                     goto ClnRet;
                 }

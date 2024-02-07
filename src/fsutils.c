@@ -10,12 +10,12 @@
 CharSeq readAll(FILE* f){
     CharSeq res;
     initSeq(char, res);
-    char c;
+    int c;
     while( (c=getc(f))!=EOF ){
       #ifndef READ_KEEP_R
       if(c!='\r')
       #endif
-        addItem(res, c);
+        addItem(res, (char)c);
     }
     return res;
 }

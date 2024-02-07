@@ -6,13 +6,13 @@ CharSeq getLine(){
     CharSeq res;
     initSeq(char, res);
 
-    char c;
+    int c;
     while( (c=getchar()) != EOF ){
         if(c=='\n'){
-            addItem(res, c);
+            addItem(res, (char)c);
             goto Ret;
         }
-        addItem(res, c);
+        addItem(res, (char)c);
     }
 Ret:
     return res;
