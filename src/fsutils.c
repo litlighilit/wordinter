@@ -6,7 +6,6 @@
 
 #include "fsutils.h"
 
-#define in_MSVC (defined _MSC_VER)
 CharSeq readAll(FILE* f){
     CharSeq res;
     initSeq(char, res);
@@ -42,7 +41,7 @@ void _NoopWithCharp(const char*_nouse){}
 
 // skip . and ..
 bool shallSkip(const char*filename){return strcmp(filename, ".")==0 || strcmp(filename, "..")==0;}
-#if in_MSVC
+#if defined _MSC_VER
 #include <windows.h>
 #include <io.h>
 
@@ -140,7 +139,7 @@ void freeListDir(RecSeq rs){
     deinitSeq(rs);
 }
 
-#if in_MSVC
+#if defined _MSC_VER
 #include <fileapi.h>
 bool dirExists(const char* dir){
 	bool res = false;
