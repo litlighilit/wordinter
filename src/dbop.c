@@ -34,7 +34,7 @@
     forIndex(__i, rs){\
         Rec rec = getItem(rs, __i);\
         Pos pos; pos.fname=rec.fname;\
-        CharSeq s = getData(rec);\
+        CharSeq s = rec.data;\
         \
         StrStream pstream = toParaStream(s);\
         \
@@ -100,7 +100,7 @@ size_t countWordOf(const Interpreter interp, slen_t fileOrd, size_t para){
     if(fileOrd<1 || fileOrd>rs.len) return FileNotFoundErr;
     slen_t fileIdx = fileOrd-1;
     Rec rec = uncheckedGetItem(rs, fileIdx);
-    CharSeq fileCont = getData(rec);
+    CharSeq fileCont = rec.data;
 
     DPres dpr = getPara(interp, fileCont, para);
     if(dpr.outOfIndex) return IndexErr;

@@ -21,7 +21,6 @@ typedef size_t slen_t;
     int itemSize;\
 }
 
-#define getData(seq) (seq.data)
 
 /** initalize a empty sequence, which shall be freed via @ref deinitSeq
  @post free data via @ref deinitSeq
@@ -49,7 +48,7 @@ typedef size_t slen_t;
     seq.len=0;\
 }while(0)
 
-#define seqEqSeq(seq1, seq2) (memcmp(getData(seq1), getData(seq2), (seq1).len*seq1.itemSize)==0)
+#define seqEqSeq(seq1, seq2) (memcmp((seq1).data, (seq2).data, (seq1).len*seq1.itemSize)==0)
 
 #define uncheckedGetItem(seq, idx) ((seq).data[idx])
 #define uncheckedSetItem(seq, idx, val) do{ (seq).data[idx]=val;}while(0)

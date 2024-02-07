@@ -7,7 +7,7 @@
 
 bool seqEqStr(const CharSeq seq, const char*s){
     if(seq.len!=strlen(s)) return false;
-    return memcmp(getData(seq), s, seq.len)==0;
+    return memcmp(seq.data, s, seq.len)==0;
 }
 
 #define _initStr(s) (s.itemSize = sizeof(char))
@@ -24,7 +24,7 @@ CharSeq charpToSeq(const char* p){
 
 char* cstr(const CharSeq s){
     char* res = (char*)malloc(s.len+1);
-    memcpy(res, getData(s), s.len);
+    memcpy(res, s.data, s.len);
     res[s.len]='\0';
     return res;
 }
