@@ -35,8 +35,6 @@ CharSeq copyCharSeq(const CharSeq s){
     res.cap = s.cap;
     res.len = s.len;
     res.data = (char*)malloc(res.len);
-    forIndex(idx, s){
-        setItem(res, idx, getItem(s, idx));
-    }
+    memcpy(res.data, s.data, s.len);
     return res;
 }

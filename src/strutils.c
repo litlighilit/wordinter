@@ -21,13 +21,9 @@ Ret:
 
 CharSeq strAdd(const CharSeq s1, const CharSeq s2){
     CharSeq res;
-    initSeq(char, res);
-
-    forIndex(i, s1) addItem(res, getItem(s1, i));
+    res = copyCharSeq(s1);
     
-    forIndex(i, s2) addItem(res, getItem(s2, i));
-
-    res.len = s1.len + s2.len;
+    forIndex(i, s2) addItem(res, uncheckedGetItem(s2, i));
 
     return res;
 }
