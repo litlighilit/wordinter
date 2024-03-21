@@ -20,21 +20,27 @@ int fileno(FILE*);  // before POSIX.2008.1
 #endif
 #define fisatty(f) ISATTY(FILENO(f))
 
+/// @returns 0 on success
+static int _cmsg_enableVT();
 #ifdef _WIN32
 #include <windows.h>
 static bool vted = false;
 static DWORD cmsg_pre_dwMode = 0; // used to recover
-void _cmsg_recover_console_mode(void){
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+void _cmsg_recover_console_modeOfHandle(DWORD handle){
+    HANDLE hOut = GetStdHandle(handle);
     if (hOut == INVALID_HANDLE_VALUE) return;
     SetConsoleMode(hOut, cmsg_pre_dwMode);
 }
 
-/// @warn can not reenter
-/// @return 
-static int _cmsg_enableVT(){
+void _cmsg_recover_console_mode(void){
+    _cmsg_recover_console_modeOfHandle(STD_OUTPUT_HANDLE);
+    _cmsg_recover_console_modeOfHandle(STD_ERROR_HANDLE);
+}
+
+/// @returns err code
+static int _cmsg_enableVTOfHandle(DWORD handle){
     // Set output mode to handle virtual terminal sequences
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hOut = GetStdHandle(handle);
     DWORD dwMode = 0;
     if (hOut == INVALID_HANDLE_VALUE) goto RetErr;
 
@@ -47,10 +53,21 @@ static int _cmsg_enableVT(){
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     if (!SetConsoleMode(hOut, dwMode)) goto RetErr;
     
-    atexit(_cmsg_recover_console_mode);
     return 0;
     RetErr:
     return GetLastError();
+}
+static int _cmsg_enableVT(){
+    // Though initially,
+    //  OUTPUT and ERROR is the active console screen buffer `CONOUT$`
+    //  (i.e. they two refer to the same one console buffer)
+    // in case that it's adjusted, we `enable` both of them:
+    int ret;
+    ret = _cmsg_enableVTOfHandle(STD_OUTPUT_HANDLE);
+    if(ret!=0) return ret;
+    ret = _cmsg_enableVTOfHandle(STD_ERROR_HANDLE);
+    atexit(_cmsg_recover_console_mode);
+    return ret;
 }
 #else
 static bool vted = true;
