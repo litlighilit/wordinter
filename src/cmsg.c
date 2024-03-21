@@ -37,7 +37,12 @@ static int _cmsg_enableVT(){
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD dwMode = 0;
     if (hOut == INVALID_HANDLE_VALUE) goto RetErr;
-    if (!GetConsoleMode(hOut, &dwMode)) goto RetErr;
+
+    // if a pipe, no need (and can-not) to enable Virual for color
+    if (!GetConsoleMode(hOut, &dwMode)){
+        if(FILE_TYPE_PIPE==GetFileType(hOut)) return 0;
+        else goto RetErr;
+    }
     cmsg_pre_dwMode = dwMode;
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     if (!SetConsoleMode(hOut, dwMode)) goto RetErr;
