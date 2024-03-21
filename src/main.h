@@ -11,7 +11,7 @@
 
 #define Author "litlighilit(lcm)"
 #define License "GPLv3"
-#define Version "1.1.4"
+#define Version "1.1.5"
 
 #define Proj "WordInter"
 #define Desc "a file-based search engine"
