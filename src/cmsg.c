@@ -2,6 +2,24 @@
 
 #include "cmsg.h"
 
+#include <stdarg.h>
+
+#if _WIN32
+# include <io.h>
+# define ISATTY(fd) _isatty(fd)
+# define FILENO(f) _fileno(f)
+#else
+# include <unistd.h> // isatty
+# if _POSIX_VERSION > 200800L
+#  include <stdio.h> // fileno
+# else
+int fileno(FILE*);  // before POSIX.2008.1 
+# endif
+# define ISATTY(fd) isatty(fd)
+# define FILENO(f) fileno(f)
+#endif
+#define fisatty(f) ISATTY(FILENO(f))
+
 #ifdef _WIN32
 #include <windows.h>
 static bool vted = false;
@@ -34,43 +52,76 @@ static bool vted = true;
 static int _cmsg_enableVT(){ return 0; }
 #endif
 
-bool colorEnabled = false;
+const char* const cmsg_colors[3]={EC(34), EC(33), EC(31)};
 
 
-const char* cmsg_colors[3]={"","",""};
+#if __STDC_VERSION__ > 202300L
+#define VA_START(vl, startv) va_start(vl)
+#else
+#define VA_START(vl, startv) va_start(vl, startv)
+#endif
 
+#define VA_INIT(vl, startv) va_list vl; VA_START(vl, startv)
+
+#define VFPRINT  \
+    VA_INIT(vl, format);\
+    int res = vfprintf(f, format, vl);\
+    va_end(vl);
+
+int fmsg(FILE* f, const char* format, ...){
+    VFPRINT
+    return res;
+}
+
+int fmsgl(FILE*f, const char* format, ...){
+    VFPRINT
+    fputc('\n', f);
+    return res;
+}
+
+static int fcolorPri(FILE* f, int ci, const char* s){
+    fmsg(f,cmsg_colors[ci]);
+    int res = fmsg(f,s);
+    fmsg(f,DEF);
+    return res;
+}
+
+int fnocolorPri(FILE* f, int _, const char* s){
+    fmsg(f, s);
+}
+
+int fcolorPriIfNoTty(FILE* f, int ci, const char* s){
+    if(fisatty(f)) return fcolorPri(f, ci, s);
+    
+    return fnocolorPri(f, ci, s);
+}
+
+int (*fPri)(FILE* f, int ci, const char* s) = fcolorPriIfNoTty;
 
 static int CmsgColorOn(){
-    if(colorEnabled) return 0;
     if(!vted){
         int ret = _cmsg_enableVT();
         if(ret!=0) return ret;
         vted = true;
     }
-    cmsg_colors[ciGreen] = EC(34);
-    cmsg_colors[ciYellow] = EC(33);
-    cmsg_colors[ciRed] = EC(31);
+    fPri = fcolorPriIfNoTty;
 
-    colorEnabled = true;
 
     return 0;
 }
-static const char* _EmptyS="";
+
 static void CmsgColorOff(){
     if(!vted) return;
-    if(!colorEnabled) return;
 
-    cmsg_colors[ciGreen] = _EmptyS;
-    cmsg_colors[ciYellow] = _EmptyS;
-    cmsg_colors[ciRed] = _EmptyS;
+    fPri = fnocolorPri;
 
-    colorEnabled = false;
 }
 
 static inline bool EnvNoColor(){
     char* s = getenv(NO_COLOR_ENV);
     return s!=NULL;
 }
+
 int cmsgCfg(enum cmsg_EnableColorLevel cl){
     if(!cl){
         CmsgColorOff();
@@ -86,3 +137,6 @@ int cmsgCfg(enum cmsg_EnableColorLevel cl){
     return CmsgColorOn();
 }
 
+int cmsgWarnOnFailCfg(enum cmsg_EnableColorLevel enableColorLevel){
+    (cmsgCfg(enableColorLevel)==0||warn("can't init color output"));
+}

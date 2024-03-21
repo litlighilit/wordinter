@@ -30,7 +30,7 @@ enum ColorIndex {
 
 enum cmsg_EnableColorLevel {
     clOff,
-    clOnIfEnvAllow,
+    clOnIfEnvAllow,  ///< only on if no `NO_CLOLR` env-var found
     clOnAnyWay,
 };
 
@@ -39,12 +39,17 @@ enum cmsg_EnableColorLevel {
 */
 int cmsgCfg(enum cmsg_EnableColorLevel cl);
 
+
+/// like cmsgCfg() but will give a warning if cfg fails
+int cmsgWarnOnFailCfg(enum cmsg_EnableColorLevel enableColorLevel);
+
+
 #define ESC "\x1b" // ESC
 #define EC(ns) (ESC "[" #ns "m")
 
 #define DEF EC(0)
 
-extern const char* cmsg_colors[3];
+extern const char* const cmsg_colors[3];
 
 #ifndef ERR_RET
 #define ERR_RET -1
@@ -58,21 +63,32 @@ extern const char* cmsg_colors[3];
 #define cmsg_err stderr
 #endif
 
-#define fmsg(f, m,...) fprintf(f, m,## __VA_ARGS__)
-#define fmsgl(f, m,...) (fmsg(f, m,##__VA_ARGS__), fputc('\n', f))
+
+int fnocolorPri(FILE* f, int _, const char* s);
+
+/// if @p f is a TTY, then print with color; else with no coor
+int fcolorPriIfNoTty(FILE* f, int ci, const char* s);
+
+// no color by default
+extern int (*fPri)(FILE* f, int ci, const char* s);
+
+// indexed by ColorIndex 
+static const char* const PRE_MSG[] = { "[INFO] ", "[WARN] ", "[ERR] " };
 
 #define msg(m,...) fmsg(cmsg_out , m,## __VA_ARGS__)
 
 #define msgl(m,...) fmsgl(cmsg_out, m,##__VA_ARGS__)
 
-#define fcolorPri(f, ci, s) (fmsg(f,cmsg_colors[ci]), fmsg(f,s), fmsg(f,DEF))
+int fmsg(FILE* f, const char* format, ...);
 
-#define info(m,...) (fcolorPri(cmsg_out, ciGreen,  "[INFO] "), msgl(m, ## __VA_ARGS__))
-#define warn(m,...) (fcolorPri(cmsg_out, ciYellow, "[WARN] "), msgl(m, ## __VA_ARGS__))
-#define err(m,...)  (fcolorPri(cmsg_err, ciRed, "[ERR] "), fmsgl(cmsg_err, m, ## __VA_ARGS__), exit(ERR_RET))
+int fmsgl(FILE*f, const char* format, ...);
 
-/// like cmsgCfg() but will give a warning if cfg fails
-#define cmsgWarnOnFailCfg(enableColorLevel) (cmsgCfg(enableColorLevel)==0||warn("can't init color output"))
+#define _priWithCI(f,ci) fPri(f, ci, PRE_MSG[ci])
+
+#define info(m,...) (_priWithCI(cmsg_out, ciGreen), msgl(m, ## __VA_ARGS__))
+#define warn(m,...) (_priWithCI(cmsg_out, ciYellow), msgl(m, ## __VA_ARGS__))
+#define err(m,...) (_priWithCI(cmsg_err, ciRed), fmsgl(cmsg_err, m, ## __VA_ARGS__), exit(ERR_RET))
+
 
 // used by both interpreter and main
 #define sayBye() msgl("bye.");
