@@ -262,7 +262,10 @@ enum Flag evalCmd(Interpreter* pinterp, const CharSeq cmd){
         if(args.len==0) fileArgOrd = 0;
         else{
             isArgOrd = _ordFileArg(&fileArgOrd, args, pinterp->db, &fnameArg);
-            if(fileArgOrd==-1) _PriNoFileFound();
+            if(fileArgOrd==-1){
+                _PriNoFileFound();
+                break;
+            }
 
             si = splitQuo2(args, ' ');
         }
