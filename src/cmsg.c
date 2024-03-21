@@ -66,6 +66,7 @@ static int _cmsg_enableVT(){
     ret = _cmsg_enableVTOfHandle(STD_OUTPUT_HANDLE);
     if(ret!=0) return ret;
     ret = _cmsg_enableVTOfHandle(STD_ERROR_HANDLE);
+    vted = true;
     atexit(_cmsg_recover_console_mode);
     return ret;
 }
@@ -133,10 +134,7 @@ static int CmsgColorOn(){
 }
 
 static void CmsgColorOff(){
-    if(!vted) return;
-
     fPri = fnocolorPri;
-
 }
 
 static inline bool EnvNoColor(){
