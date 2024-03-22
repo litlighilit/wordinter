@@ -19,6 +19,8 @@ CFLAGS=-std=c99
 
 ifneq (,$(findstring build_dbg,$(build)))  # if contains build_dbg
 CFLAGS+=-g
+else
+CFLAGS+=-O2
 endif
 
 outflag?=-o
