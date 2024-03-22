@@ -1,16 +1,35 @@
+# usage:
+#  make  -> make build=build
+#  make build=<build_xxx> -> build in dir <build_xxx>
+# P.S. /build_*/ has been added to .gitignore
 
-# result exe filepath
+# Special build:
+#  build_dbg*	will add -g
+
+# result exe filename
 target_fn=wordinter
 
 
 src=src
 headerDir=src
 #build dir
-build=build
+build?=build
 CFLAGS=-std=c99
+
+ifneq (,$(findstring build_dbg,$(build)))  # if contains build_dbg
+CFLAGS+=-g
+endif
+
+
 target=$(build)/$(target_fn)
 
+# objCache will be used for check and make dir via `cmd` command
+ifeq ($(OS), Windows_NT)
+SHELL=cmd
+objCache=$(build)\objs
+else
 objCache=$(build)/objs
+endif
 
 srcs=$(wildcard $(src)/*.c)
 
@@ -27,8 +46,14 @@ incDir=$(incDirFlag) $(headerDir)
 $(target):$(objs)
 	$(CC) $(CFLAGS) $+ -o $@
 
+$(objCache):
+ifeq ($(OS), Windows_NT)
+	if not exist $(objCache) ( md $(objCache) )
+else
+	mkdir -p $(objCache)
+endif
 
-$(objCache)/%.o:$(src)/%.c $(src)/%.h
+$(objCache)/%.o:$(src)/%.c $(src)/%.h | $(objCache)
 	$(to_obj) $(CFLAGS) $(incDir) $< -o $@
 
 
