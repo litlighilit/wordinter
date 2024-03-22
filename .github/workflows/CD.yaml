@@ -1,0 +1,54 @@
+
+name: C CD
+
+on:
+  push:
+    tags: "v*"
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false       
+      matrix:
+       os: [ubuntu-latest, windows-lastest, macos-lastest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Add msbuild to PATH on Windows
+      if: matrix.os == 'windows-lastest'
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Update build Dir
+      id: buildInfo
+      run: echo adding build dir info
+      env:
+        suffix: ${{ matrix.os == 'windows-lastest' && 'MSVC' || matrix.os }}
+      
+    - name: Build
+      run: make build=build_${{ steps.buildInfo.env.suffix }}
+      
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}	
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}	
+        assert_suf: ${{ matrix.os == 'windows-lastest' && '.exe' || '' }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build_${{ steps.buildInfo.env.suffix }}/wordinter${{ env.assert_suf }}
+        asset_name: wordinter.${{ matrix.os }}${{ env.assert_suf }}
+        asset_content_type: application/octet-stream
+
