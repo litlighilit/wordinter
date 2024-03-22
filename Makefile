@@ -8,7 +8,7 @@
 #  build_MSVC	will use MS Visuall C++ Tools
 
 # result exe filename
-target_fn=wordinter
+target_fn?=wordinter
 
 
 src=src
