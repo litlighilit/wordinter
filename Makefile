@@ -5,6 +5,7 @@
 
 # Special build:
 #  build_dbg*	will add -g
+#  build_MSVC	will use MS Visuall C++ Tools
 
 # result exe filename
 target_fn=wordinter
@@ -20,6 +21,11 @@ ifneq (,$(findstring build_dbg,$(build)))  # if contains build_dbg
 CFLAGS+=-g
 endif
 
+outflag?=-o
+ifeq ($(build),build_MSVC)
+CC=cl
+outflag=/OUT:
+endif
 
 target=$(build)/$(target_fn)
 
@@ -44,7 +50,7 @@ incDirFlag=-I
 incDir=$(incDirFlag) $(headerDir)
 #rm=rm
 $(target):$(objs)
-	$(CC) $(CFLAGS) $+ -o $@
+	$(CC) $(CFLAGS) $+ $(outflag)$@
 
 $(objCache):
 ifeq ($(OS), Windows_NT)
@@ -54,7 +60,7 @@ else
 endif
 
 $(objCache)/%.o:$(src)/%.c $(src)/%.h | $(objCache)
-	$(to_obj) $(CFLAGS) $(incDir) $< -o $@
+	$(to_obj) $(CFLAGS) $(incDir) $< $(outflag) $@
 
 
 
