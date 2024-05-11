@@ -1,5 +1,5 @@
-## desc
-a files-based search engine interpreter,
+## Desc
+A files-based search engine interpreter,
 
 supporting:
 
@@ -8,9 +8,9 @@ supporting:
 - count the number of words within one paragraphs
 - ...(see `src/interpreter.c`)
 
-## factors
+## Factors
 
-### runtime
+### Runtime
 - allow any numbers of files in input directory
 - allow any amount of file contents
 - bound checks are round:
@@ -20,7 +20,7 @@ supporting:
 - when CLI:
 	- can handle filenames that contains spaces (given surrounded by quotation marks)
 
-### compile
+### Compile-time
 - target both POSIX and Windows
 - build via `make`
 - compatiable with C++ (can be compiled via C++ compiler)
@@ -28,7 +28,7 @@ supporting:
 - self-write a framework for `doctest`
 - several self-written modules can be used as frameworks, serving for other projects and depends nothing other than this project's modules.
 
-## difficulties for implementations
+## Difficulties for implementations
 
 ### cmdline
 To ensure MSVC-compatiablity, I'm enforced to say goodbye to `getopt`, which means it comes harder to parse cmdline... and I have to write quite a few code myself...
